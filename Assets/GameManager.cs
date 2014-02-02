@@ -26,20 +26,31 @@ public class GameManager : MonoBehaviour {
 
     void OnGUI()
     {
-        string msg = new string(message.ToString().ToCharArray());
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), msg);
-        Debug.Log("On GUI called: " + msg);
-        //message.Length = 0;
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "" + message);
+        if (Event.current.type == EventType.Repaint)
+        {
+            message.Length = 0;
+        }
     }
 
-    public void AddMessage(string message)
+    public static void PrintMessage(string message)
     {
-        this.message.Append(message + "\n");
+        Instance().message.Append(message + "\n");    
+    }
+
+    public static void PrintFloat(string message, float f)
+    {
+        Instance().message.Append(message + ": " + f + "\n");
+    }
+
+    public static void PrintVector(string message, Vector3 v)
+    {
+        Instance().message.Append(message + ": (" + v.x + ", " + v.y + ", " + v.z + ")\n");
     }
 
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log("Update called");
+
 	}
 }

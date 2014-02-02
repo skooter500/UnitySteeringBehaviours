@@ -89,13 +89,8 @@ public class FPSController : MonoBehaviour {
         mouseX = Input.GetAxis("Mouse X");
         mouseY = Input.GetAxis("Mouse Y");
 
-        GameManager.Instance().AddMessage("Mouse X" + mouseX);
-        GameManager.Instance().AddMessage("Mouse Y" + mouseY);
-
 		float invcosTheta1 = Vector3.Dot(look, Vector3.up);
 		float angle = Mathf.Acos (invcosTheta1);
-        GameManager.Instance().AddMessage("InvCostheta: " + invcosTheta1);
-        GameManager.Instance().AddMessage("Pitch angle: " + angle);
 
 		Yaw(mouseX);
 		Pitch(-mouseY);

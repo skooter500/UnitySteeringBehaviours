@@ -13,7 +13,7 @@ public class Perception : MonoBehaviour {
 	void Update () {
         Vector3 toOtherShip = otherShip.transform.position - gameObject.transform.position;
         string message;
-        if (toOtherShip.magnitude > 20.0f)
+        if (toOtherShip.magnitude > 10.0f)
         {
             message = "Out of range";            
         }
@@ -21,7 +21,7 @@ public class Perception : MonoBehaviour {
         {
             message = "In range";
         }
-        GameManager.Instance().AddMessage("In range");
+        GameManager.PrintMessage(message);
         Debug.Log("" + message);
 
         toOtherShip.Normalize();
@@ -29,11 +29,11 @@ public class Perception : MonoBehaviour {
         float dot = Vector3.Dot(toOtherShip, transform.forward);
         if (dot < 0)
         {
-            GameManager.Instance().AddMessage("Behind");
+            GameManager.PrintMessage("Behind");
         }
         else
         {
-            GameManager.Instance().AddMessage("In front");
+            GameManager.PrintMessage("In front");
         }
 
 	}
