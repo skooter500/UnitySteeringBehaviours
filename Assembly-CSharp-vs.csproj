@@ -46,21 +46,21 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\FPSController.cs" />
-     <Compile Include="Assets\GameManager.cs" />
-     <Compile Include="Assets\MoveSTuff.cs" />
-     <Compile Include="Assets\Params.cs" />
-     <Compile Include="Assets\Path.cs" />
-     <Compile Include="Assets\Perception.cs" />
-     <Compile Include="Assets\Ray.cs" />
-     <Compile Include="Assets\Rotate.cs" />
-     <Compile Include="Assets\RotateScript.cs" />
-     <Compile Include="Assets\Scenario.cs" />
-     <Compile Include="Assets\SeekScenario.cs" />
-     <Compile Include="Assets\Sphere.cs" />
-     <Compile Include="Assets\SteeringBehaviours.cs" />
-     <Compile Include="Assets\SteeringController.cs" />
-     <Compile Include="Assets\VectorDrawer.cs" />
+     <Compile Include="Assets\Code\FPSController.cs" />
+     <Compile Include="Assets\Code\GameManager.cs" />
+     <Compile Include="Assets\Code\MoveSTuff.cs" />
+     <Compile Include="Assets\Code\Params.cs" />
+     <Compile Include="Assets\Code\Path.cs" />
+     <Compile Include="Assets\Code\Perception.cs" />
+     <Compile Include="Assets\Code\Ray.cs" />
+     <Compile Include="Assets\Code\Rotate.cs" />
+     <Compile Include="Assets\Code\RotateScript.cs" />
+     <Compile Include="Assets\Code\Scenario.cs" />
+     <Compile Include="Assets\Code\SeekScenario.cs" />
+     <Compile Include="Assets\Code\Sphere.cs" />
+     <Compile Include="Assets\Code\SteeringBehaviours.cs" />
+     <Compile Include="Assets\Code\SteeringController.cs" />
+     <Compile Include="Assets\Code\VectorDrawer.cs" />
      <None Include="Assets\flocking.txt" />
      <None Include="Assets\default.txt" />
   </ItemGroup>

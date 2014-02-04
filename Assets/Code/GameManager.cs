@@ -7,6 +7,11 @@ public class GameManager : MonoBehaviour {
     Scenario currentScenario;
     StringBuilder message = new StringBuilder();
 
+    public GameObject boidPrefab;
+    public GameObject attackerPrefab;
+    public GameObject leaderPrefab;
+    public GameObject seekerPrefab;
+
     static GameManager instance;
 	// Use this for initialization
 
@@ -54,6 +59,7 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
         currentScenario.Update();
 	}
 }
