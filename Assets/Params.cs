@@ -1,4 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ class Params
     public static void Load(string filename)
     {
         dictionary.Clear();
-        StreamReader sw = new StreamReader("..\\..\\..\\" + filename);
+        StreamReader sw = new StreamReader(Application.dataPath + filename);
         char[] delims = { '=' };
         while (!sw.EndOfStream)
         {

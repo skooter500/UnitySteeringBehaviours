@@ -50,12 +50,19 @@
      <Compile Include="Assets\GameManager.cs" />
      <Compile Include="Assets\MoveSTuff.cs" />
      <Compile Include="Assets\Params.cs" />
+     <Compile Include="Assets\Path.cs" />
      <Compile Include="Assets\Perception.cs" />
+     <Compile Include="Assets\Ray.cs" />
      <Compile Include="Assets\Rotate.cs" />
      <Compile Include="Assets\RotateScript.cs" />
+     <Compile Include="Assets\Scenario.cs" />
+     <Compile Include="Assets\SeekScenario.cs" />
+     <Compile Include="Assets\Sphere.cs" />
      <Compile Include="Assets\SteeringBehaviours.cs" />
      <Compile Include="Assets\SteeringController.cs" />
      <Compile Include="Assets\VectorDrawer.cs" />
+     <None Include="Assets\flocking.txt" />
+     <None Include="Assets\default.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

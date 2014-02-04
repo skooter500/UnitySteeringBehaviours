@@ -22,7 +22,7 @@ public class SteeringBehaviours : MonoBehaviour {
     List<GameObject> tagged = new List<GameObject>();
     List<Vector3> Feelers = new List<Vector3>();
 
-    // Special Game Objects required to implement certain behaviours
+    // Values required to implement certain behaviours
     private GameObject target; // required for evade
     private GameObject leader; // required for offset pursuit
     private Vector3 wanderTargetPos;

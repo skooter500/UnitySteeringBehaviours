@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 public class GameManager : MonoBehaviour {
-
+    Scenario currentScenario;
     StringBuilder message = new StringBuilder();
 
     static GameManager instance;
@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         instance = this;
         Screen.showCursor = false;
+        currentScenario = new SeekScenario();
+
+        currentScenario.SetUp();
 	}
 
     public static GameManager Instance()
@@ -51,6 +54,6 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+        currentScenario.Update();
 	}
 }
