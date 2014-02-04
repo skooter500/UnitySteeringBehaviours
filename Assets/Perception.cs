@@ -36,5 +36,15 @@ public class Perception : MonoBehaviour {
             GameManager.PrintMessage("In front");
         }
 
+        float fov = Mathf.Deg2Rad * (45.0f / 2.0f);
+        float angle = Mathf.Acos(dot);
+        if (angle < fov)
+        {
+            GameManager.PrintMessage("Inside FOV");
+        }
+        else
+        {
+            GameManager.PrintMessage("Outside FOV");
+        }
 	}
 }
