@@ -4,12 +4,17 @@ using System.Collections;
 public class SteeringController : MonoBehaviour {
     public Vector3 force;
     public Vector3 velocity;
-    public  float mass;
+    
+    public Vector3 targetPos;
+
+    public float mass;
 
     public KeyCode forwardKey;
     public KeyCode backKey;
     public KeyCode leftKey;
     public KeyCode rightKey;
+
+    
 
     public SteeringController()
     {

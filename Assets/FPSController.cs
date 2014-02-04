@@ -86,6 +86,18 @@ public class FPSController : MonoBehaviour {
             position += gameObject.transform.right * Time.deltaTime * speed;
         }
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            GameObject sphere = GameObject.FindGameObjectWithTag("sphere");
+            Vector3 target = position + (look * 100);
+            target.y = 5;
+            sphere.transform.position = target;
+
+            GameObject cobra = GameObject.FindGameObjectWithTag("cobramk3");
+            SteeringBehaviours steering = (SteeringBehaviours) cobra.GetComponent("SteeringBehaviours");
+            steering.targetPos = target;            
+        }
+
         mouseX = Input.GetAxis("Mouse X");
         mouseY = Input.GetAxis("Mouse Y");
 

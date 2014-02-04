@@ -52,6 +52,7 @@
      <Compile Include="Assets\Perception.cs" />
      <Compile Include="Assets\Rotate.cs" />
      <Compile Include="Assets\RotateScript.cs" />
+     <Compile Include="Assets\SteeringBehaviours.cs" />
      <Compile Include="Assets\SteeringController.cs" />
      <Compile Include="Assets\VectorDrawer.cs" />
   </ItemGroup>
