@@ -49,6 +49,7 @@
      <Compile Include="Assets\FPSController.cs" />
      <Compile Include="Assets\GameManager.cs" />
      <Compile Include="Assets\MoveSTuff.cs" />
+     <Compile Include="Assets\Params.cs" />
      <Compile Include="Assets\Perception.cs" />
      <Compile Include="Assets\Rotate.cs" />
      <Compile Include="Assets\RotateScript.cs" />

@@ -7,13 +7,14 @@ public class SteeringBehaviours : MonoBehaviour {
 
     public Vector3 force;
     public Vector3 velocity;
-
-    public Vector3 targetPos;
-
+    
     public float mass;
 
     public float maxSpeed = 20;
     public float maxForce = 10;
+
+    public bool drawFeelers = false;
+    public bool drawAxis = false;
 
     public enum CalculationMethods { WeightedTruncatedSum, WeightedTruncatedRunningSumWithPrioritisation, PrioritisedDithering };
     CalculationMethods calculationMethod;
@@ -22,8 +23,13 @@ public class SteeringBehaviours : MonoBehaviour {
     List<Vector3> Feelers = new List<Vector3>();
 
     // Special Game Objects required to implement certain behaviours
-    GameObject target; // required for evade
-    GameObject leader; // required for offset pursuit
+    private GameObject target; // required for evade
+    private GameObject leader; // required for offset pursuit
+    private Vector3 wanderTargetPos;
+    public Vector3 seekTargetPos;
+    public Vector3 offset;
+    private Vector3 randomWalkTarget;
+    public Path path = new Path();
 
     #region Flags
     public enum behaviour_type
@@ -175,7 +181,7 @@ public class SteeringBehaviours : MonoBehaviour {
         return true;
     }
 
-    public Vector3 calculate()
+    public Vector3 Calculate()
     {
         if (calculationMethod == CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation)
         {
@@ -262,7 +268,7 @@ public class SteeringBehaviours : MonoBehaviour {
 
         if (isOn(behaviour_type.seek))
         {
-            force = Seek(fighter.TargetPos) * Params.GetWeight("seek_weight");
+            force = Seek(seekTargetPos) * Params.GetWeight("seek_weight");
             if (!accumulateForce(ref steeringForce, force))
             {
                 return steeringForce;
@@ -271,7 +277,7 @@ public class SteeringBehaviours : MonoBehaviour {
 
         if (isOn(behaviour_type.arrive))
         {
-            force = Arrive(fighter.TargetPos) * Params.GetWeight("arrive_weight");
+            force = Arrive(seekTargetPos) * Params.GetWeight("arrive_weight");
             if (!accumulateForce(ref steeringForce, force))
             {
                 return steeringForce;
@@ -298,7 +304,7 @@ public class SteeringBehaviours : MonoBehaviour {
 
         if (isOn(behaviour_type.offset_pursuit))
         {
-            force = OffsetPursuit(fighter.offset) * Params.GetWeight("offset_pursuit_weight");
+            force = OffsetPursuit(offset) * Params.GetWeight("offset_pursuit_weight");
             if (!accumulateForce(ref steeringForce, force))
             {
                 return steeringForce;
@@ -325,43 +331,9 @@ public class SteeringBehaviours : MonoBehaviour {
 
         return steeringForce;
     }
-    #endregion
-
-    #region Behaviours
-    Vector3 Seek(Vector3 targetPos)
-    {
-        Vector3 desiredVelocity;
-
-        desiredVelocity = targetPos - transform.position;
-        desiredVelocity.Normalize();
-        desiredVelocity *= maxSpeed;
-
-        return (desiredVelocity - velocity);
-    }
-    #endregion
-
-    // Use this for initialization
-	void Start () {
-	
-	}
-	
-	public SteeringBehaviours()
-    {
-        force = Vector3.zero;
-        velocity = Vector3.zero;
-        mass = 10.0f;
-
-        GameObject sphere = GameObject.FindGameObjectWithTag("sphere");
-        targetPos = sphere.transform.position;    
-    }
-
-    Vector3 Calculate()
-    {
-        return Seek(targetPos);
-    }
 
     void Update()
-    {       
+    {
         Vector3 acceleration = Calculate() / mass;
         velocity += acceleration * Time.deltaTime;
         gameObject.transform.position += velocity * Time.deltaTime;
@@ -375,4 +347,408 @@ public class SteeringBehaviours : MonoBehaviour {
 
         velocity *= 0.99f;
     }
+
+    #endregion
+
+    #region Behaviours
+    Vector3 Seek(Vector3 targetPos)
+    {
+        Vector3 desiredVelocity;
+
+        desiredVelocity = targetPos - transform.position;
+        desiredVelocity.Normalize();
+        desiredVelocity *= maxSpeed;
+
+        return (desiredVelocity - velocity);
+    }
+
+    Vector3 Evade()
+    {
+        float dist = (target.transform.position - transform.position).magnitude;
+        float lookAhead = (dist / maxSpeed);
+
+        Vector3 targetPos = target.transform.position + (lookAhead * target.GetComponent<SteeringBehaviours>().velocity);
+        return Flee(targetPos);
+    }
+
+    Vector3 ObstacleAvoidance()
+    {
+        Vector3 force = Vector3.zero;
+        makeFeelers();
+        List<GameObject> tagged = new List<GameObject>();
+        float minBoxLength = 20.0f;
+        float boxLength = minBoxLength + ((velocity.magnitude / maxSpeed) * minBoxLength * 2.0f);
+
+        if (float.IsNaN(boxLength))
+        {
+            System.Console.WriteLine("NAN");
+        }
+        // Matt Bucklands Obstacle avoidance
+        // First tag obstacles in range
+        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");
+        foreach (GameObject obstacle in obstacles)
+        {
+            Vector3 toCentre = transform.position - obstacle.transform.position;
+            float dist = toCentre.magnitude;
+            if (dist < boxLength)
+            {
+                tagged.Add(obstacle);
+            }            
+        }
+
+        float distToClosestIP = float.MaxValue;
+        GameObject closestIntersectingObstacle = null;
+        Vector3 localPosOfClosestObstacle = Vector3.zero;
+        Vector3 intersection = Vector3.zero;
+
+        foreach (GameObject o in tagged)
+        {
+            Vector3 localPos = transform.InverseTransformPoint(o.transform.position);
+            //Vector3 localPos = o.pos - fighter.pos;
+
+            // If the local position has a positive Z value then it must lay
+            // behind the agent. (in which case it can be ignored)
+            if (localPos.z <= 0)
+            {
+                // If the distance from the x axis to the object's position is less
+                // than its radius + half the width of the detection box then there
+                // is a potential intersection.
+
+                float myRadius = gameObject.GetComponent<Renderer>().bounds.extents.magnitude;
+                float obstacleRadius = o.GetComponent<Renderer>().bounds.extents.magnitude;
+                float expandedRadius = myRadius + obstacleRadius;
+                if ((Math.Abs(localPos.y) < expandedRadius) && (Math.Abs(localPos.x) < expandedRadius))
+                {
+                    // Now to do a ray/sphere intersection test. The center of the				
+                    // Create a temp Entity to hold the sphere in local space
+                    Sphere tempSphere = new Sphere(expandedRadius, localPos);
+
+                    // Create a ray
+                    Ray ray = new Ray();
+                    ray.pos = new Vector3(0, 0, 0);
+                    ray.look = Vector3.forward;
+
+                    // Find the point of intersection
+                    if (tempSphere.closestRayIntersects(ray, Vector3.zero, ref intersection) == false)
+                    {
+                        return Vector3.zero;
+                    }
+
+                    // Now see if its the closest, there may be other intersecting spheres
+                    float dist = intersection.magnitude;
+                    if (dist < distToClosestIP)
+                    {
+                        dist = distToClosestIP;
+                        closestIntersectingObstacle = o;
+                        localPosOfClosestObstacle = localPos;
+                    }
+                }
+            }
+            if (closestIntersectingObstacle != null)
+            {
+                // Now calculate the force
+                // Calculate Z Axis braking  force
+                float multiplier = 200 * (1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength);
+
+
+
+                //calculate the lateral force
+                float myRadius = gameObject.GetComponent<Renderer>().bounds.extents.magnitude;
+                float obstacleRadius = closestIntersectingObstacle.GetComponent<Renderer>().bounds.extents.magnitude;
+                float expandedRadius = myRadius + obstacleRadius;
+                force.x = (expandedRadius - Math.Abs(localPosOfClosestObstacle.x)) * multiplier;
+                force.y = (expandedRadius - -Math.Abs(localPosOfClosestObstacle.y)) * multiplier;
+
+                if (localPosOfClosestObstacle.x > 0)
+                {
+                    force.x = -force.x;
+                }
+
+                if (localPosOfClosestObstacle.y > 0)
+                {
+                    force.y = -force.y;
+                }
+
+                /*if (fighter.pos.X < o.pos.X)
+                {
+                    force.X = -force.X;
+                }
+                     
+                if (fighter.pos.Y < o.pos.Y)
+                 * 
+                {
+                    force.Y = -force.Y;
+                }*/
+
+                Debug.DrawLine(transform.position, transform.position + transform.forward * boxLength, Color.blue);
+                //apply a braking force proportional to the obstacle's distance from
+                //the vehicle.
+                const float brakingWeight = 40.0f;
+                force.z = (obstacleRadius -
+                                   localPosOfClosestObstacle.z) *
+                                   brakingWeight;
+
+                //finally, convert the steering vector from local to world space
+                force = transform.TransformPoint(force);
+            }
+        }
+
+        
+        return force;
+    }
+
+    Vector3 OffsetPursuit(Vector3 offset)
+    {
+        Vector3 target = Vector3.zero;
+
+        //target = offset + fighter.Leader.pos;
+        target = transform.TransformPoint(offset);
+
+        float dist = (target - transform.position).magnitude;
+
+        float lookAhead = (dist / maxSpeed);
+
+        target = target + (lookAhead * leader.GetComponent<SteeringBehaviours>().velocity);
+
+        checkNaN(target);
+        return Arrive(target);
+    }
+
+    Vector3 Pursue()
+    {
+        float dist = (target.transform.position - transform.position).magnitude;
+
+        if (dist < 1.0f)
+        {
+            //target.transform.pos = new Vector3(20, 20, 0);
+        }
+        float lookAhead = (dist / maxSpeed);
+
+        Vector3 targetPos = target.transform.position + (lookAhead * target.transform.GetComponent<SteeringBehaviours>().velocity);
+        return Seek(targetPos);
+    }
+
+    Vector3 Flee(Vector3 targetPos)
+    {
+        float panicDistance = 100.0f;
+        Vector3 desiredVelocity;
+        desiredVelocity = transform.position - targetPos;
+        if (desiredVelocity.magnitude > panicDistance)
+        {
+            return Vector3.zero;
+        }
+        desiredVelocity.Normalize();
+        desiredVelocity *= maxSpeed;
+        return (desiredVelocity - velocity);
+    }
+
+    Vector3 RandomWalk()
+    {
+        float dist = (transform.position - randomWalkTarget).magnitude;
+        if (dist < 50)
+        {
+            randomWalkTarget.x = RandomClamped() * Params.GetFloat("world_range");
+            randomWalkTarget.y = RandomClamped() * Params.GetFloat("world_range");
+            randomWalkTarget.z = RandomClamped() * Params.GetFloat("world_range");
+        }
+        return Seek(randomWalkTarget);
+    }
+
+    Vector3 Wander()
+    {
+        float jitterTimeSlice = Params.GetFloat("wander_jitter") * Time.deltaTime;
+
+        Vector3 toAdd = new Vector3(RandomClamped(), RandomClamped(), RandomClamped()) * jitterTimeSlice;
+        wanderTargetPos += toAdd;
+        wanderTargetPos.Normalize();
+        wanderTargetPos *= Params.GetFloat("wander_radius");
+
+        Vector3 worldTarget = transform.TransformPoint(wanderTargetPos + (Vector3.forward * Params.GetFloat("wander_distance")));
+        return (worldTarget - transform.position);
+    }
+
+    public Vector3 WallAvoidance()
+    {
+        makeFeelers();
+
+        Plane worldPlane = new Plane(new Vector3(0, 1, 0), 0);
+        Vector3 force = Vector3.zero;
+
+        foreach (Vector3 feeler in Feelers)
+        {            
+            if (!worldPlane.GetSide(feeler))
+            {
+                float distance = worldPlane.GetDistanceToPoint(feeler);
+                force += worldPlane.normal * distance;
+            }
+        }
+
+        if (force.magnitude > 0.0)
+        {
+            drawFeelers = true;
+        }
+        else
+        {
+            drawFeelers = false;
+        }
+        drawAxis = false;
+        return force;
+    }
+
+    public Vector3 Arrive(Vector3 target)
+    {
+        Vector3 toTarget = target - transform.position;
+
+        float slowingDistance = 8.0f;
+        float distance = toTarget.magnitude;
+        if (distance == 0.0f)
+        {
+            return Vector3.zero;
+        }
+        const float DecelerationTweaker = 10.3f;
+        float ramped = maxSpeed * (distance / (slowingDistance * DecelerationTweaker));
+
+        float clamped = Math.Min(ramped, maxSpeed);
+        Vector3 desired = clamped * (toTarget / distance);
+
+        checkNaN(desired);
+
+
+        return desired - velocity;
+    }
+
+    private Vector3 FollowPath()
+    {
+        float epsilon = 5.0f;
+        float dist = (transform.position - path.NextWaypoint()).magnitude;
+        if (dist < epsilon)
+        {
+            path.AdvanceToNext();
+        }
+        if ((!path.Looped) && path.IsLast())
+        {
+            return Arrive(path.NextWaypoint());
+        }
+        else
+        {
+            return Seek(path.NextWaypoint());
+        }
+    }
+
+    public Vector3 SphereConstrain(float radius)
+    {
+        float distance = transform.position.magnitude;
+        Vector3 steeringForce = Vector3.zero;
+        if (distance > radius)
+        {
+            steeringForce = Vector3.Normalize(transform.position) * (radius - distance);
+        }
+        return steeringForce;
+    }
+
+    #endregion
+
+    #region Flocking
+    private int TagNeighboursSimple(float inRange)
+    {
+        tagged.Clear();
+
+        GameObject[] steerables = GameObject.FindGameObjectsWithTag("steerable");
+        foreach (GameObject steerable in steerables)
+        {
+            if (steerable != gameObject)
+            {                
+                if ((transform.position - steerable.transform.position).magnitude < inRange)
+                {
+                    tagged.Add(steerable);
+                }
+            }
+        }
+        return tagged.Count;
+    }
+
+    public Vector3 Separation()
+    {
+        Vector3 steeringForce = Vector3.zero;
+        for (int i = 0; i < tagged.Count; i++)
+        {
+            GameObject entity = tagged[i];
+            if (entity != null)
+            {
+                Vector3 toEntity = transform.position - entity.transform.position;
+                steeringForce += (Vector3.Normalize(toEntity) / toEntity.magnitude);
+            }
+        }
+
+        return steeringForce;
+    }
+
+    public Vector3 Cohesion()
+    {
+        Vector3 steeringForce = Vector3.zero;
+        Vector3 centreOfMass = Vector3.zero;
+        int taggedCount = 0;
+        foreach (GameObject entity in tagged)
+        {
+            if (entity != gameObject)
+            {
+                centreOfMass += entity.transform.position;
+                taggedCount++;
+            }
+        }
+        if (taggedCount > 0)
+        {
+            centreOfMass /= (float)taggedCount;
+
+            if (centreOfMass.sqrMagnitude == 0)
+            {
+                steeringForce = Vector3.zero;
+            }
+            else
+            {
+                steeringForce = Vector3.Normalize(Seek(centreOfMass));
+            }
+        }
+        checkNaN(steeringForce);
+        return steeringForce;
+    }
+
+    public Vector3 Alignment()
+    {
+        Vector3 steeringForce = Vector3.zero;
+        int taggedCount = 0;
+        foreach (GameObject entity in tagged)
+        {
+            if (entity != gameObject)
+            {
+                steeringForce += entity.transform.forward;
+                taggedCount++;
+            }
+        }
+
+        if (taggedCount > 0)
+        {
+            steeringForce /= (float)taggedCount;
+            steeringForce -= transform.forward;
+        }
+        return steeringForce;
+
+    }
+    #endregion Flocking
+
+    // Use this for initialization
+	void Start () {
+	
+	}
+	
+	public SteeringBehaviours()
+    {
+        force = Vector3.zero;
+        velocity = Vector3.zero;
+        mass = 10.0f;
+
+        calculationMethod = CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation;
+        target = null;
+        leader = null;
+    }    
 }

@@ -95,7 +95,7 @@ public class FPSController : MonoBehaviour {
 
             GameObject cobra = GameObject.FindGameObjectWithTag("cobramk3");
             SteeringBehaviours steering = (SteeringBehaviours) cobra.GetComponent("SteeringBehaviours");
-            steering.targetPos = target;            
+            steering.seekTargetPos = target;            
         }
 
         mouseX = Input.GetAxis("Mouse X");

@@ -51,9 +51,12 @@
     <Compile Include="Assets\GameManager.cs" />
     <Compile Include="Assets\MoveSTuff.cs" />
     <Compile Include="Assets\Params.cs" />
+    <Compile Include="Assets\Path.cs" />
     <Compile Include="Assets\Perception.cs" />
+    <Compile Include="Assets\Ray.cs" />
     <Compile Include="Assets\Rotate.cs" />
     <Compile Include="Assets\RotateScript.cs" />
+    <Compile Include="Assets\Sphere.cs" />
     <Compile Include="Assets\SteeringBehaviours.cs" />
     <Compile Include="Assets\SteeringController.cs" />
     <Compile Include="Assets\VectorDrawer.cs" />
