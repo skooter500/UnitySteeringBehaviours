@@ -1,13 +1,19 @@
 fileFormatVersion: 2
-guid: ae40ad40d622221408b6a7356050667e
+guid: 4fc1cd0827ee0fe4b942d8a20bcef68e
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
     100000: //RootNode
+    100002: adder
+    100004: Camera
+    100006: Lamp
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: python
+    400002: adder
+    400004: Camera
+    400006: Lamp
+    2300000: adder
+    3300000: adder
+    4300000: adder
     7400000: Default Take
     9500000: //RootNode
   materials:

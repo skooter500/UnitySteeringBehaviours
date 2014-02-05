@@ -7,11 +7,9 @@ public class SteeringBehaviours : MonoBehaviour {
 
     public Vector3 force;
     public Vector3 velocity;
+    public Vector3 acceleration;
     
     public float mass;
-
-    public float maxSpeed = 20;
-    public float maxForce = 10;
 
     public bool drawFeelers = false;
     public bool drawAxis = false;
@@ -59,7 +57,7 @@ public class SteeringBehaviours : MonoBehaviour {
     int flags;
 
     public bool isOn(behaviour_type behaviour)
-    {
+    { 
         return ((flags & (int)behaviour) == (int)behaviour);
     }
 
@@ -194,8 +192,7 @@ public class SteeringBehaviours : MonoBehaviour {
     private Vector3 calculateWeightedPrioritised()
     {
         Vector3 force = Vector3.zero;
-        Vector3 steeringForce = Vector3.zero;
-
+        Vector3 steeringForce = Vector3.zero;      
 
         if (isOn(behaviour_type.obstacle_avoidance))
         {
@@ -334,30 +331,77 @@ public class SteeringBehaviours : MonoBehaviour {
 
     void Update()
     {
-        Vector3 acceleration = Calculate() / mass;
-        velocity += acceleration * Time.deltaTime;
-        gameObject.transform.position += velocity * Time.deltaTime;
+        float smoothRate;
+        force = Calculate();
+        SteeringBehaviours.checkNaN(force);
+        Vector3 newAcceleration = force / mass;
 
-        force = Vector3.zero;
-
-        if (velocity.magnitude > 0.01f)
+        if (Time.deltaTime > 0.0f)
         {
-            gameObject.transform.forward = Vector3.Normalize(velocity);
+            smoothRate = Utilities.Clip(9.0f * Time.deltaTime, 0.15f, 0.4f) / 2.0f;
+            Utilities.BlendIntoAccumulator(smoothRate, newAcceleration, ref acceleration);
         }
 
-        velocity *= 0.99f;
+        velocity += acceleration * Time.deltaTime;
+
+        float speed = velocity.magnitude;
+        if (speed > Params.GetFloat("max_speed"))
+        {
+            velocity.Normalize();
+            velocity *= Params.GetFloat("max_speed");
+        }
+        transform.position += velocity * Time.deltaTime;
+
+
+        // the length of this global-upward-pointing vector controls the vehicle's
+        // tendency to right itself as it is rolled over from turning acceleration
+        Vector3 globalUp = new Vector3(0, 0.2f, 0);
+        // acceleration points toward the center of local path curvature, the
+        // length determines how much the vehicle will roll while turning
+        Vector3 accelUp = acceleration * 0.05f;
+        // combined banking, sum of UP due to turning and global UP
+        Vector3 bankUp = accelUp + globalUp;
+        // blend bankUp into vehicle's UP basis vector
+        smoothRate = Time.deltaTime * 3.0f;
+        Vector3 tempUp = transform.up;
+        Utilities.BlendIntoAccumulator(smoothRate, bankUp, ref tempUp);
+
+        if (speed > 0.0001f)
+        {
+            transform.forward = velocity;
+            transform.forward.Normalize();
+            transform.LookAt(transform.position + transform.forward, tempUp);
+            // Apply damping
+            velocity *= 0.99f;
+        }
+
+        path.Draw();
+
+        //Vector3 acceleration = Calculate() / mass;
+        //velocity += acceleration * Time.deltaTime;
+        //gameObject.transform.position += velocity * Time.deltaTime;
+
+        //force = Vector3.zero;
+
+        //if (velocity.magnitude > 0.01f)
+        //{
+        //    gameObject.transform.forward = Vector3.Normalize(velocity);
+        //}
+
+        //velocity *= 0.99f;
     }
 
     #endregion
 
     #region Behaviours
+    
     Vector3 Seek(Vector3 targetPos)
     {
         Vector3 desiredVelocity;
 
         desiredVelocity = targetPos - transform.position;
         desiredVelocity.Normalize();
-        desiredVelocity *= maxSpeed;
+        desiredVelocity *= Params.GetFloat("max_speed");
 
         return (desiredVelocity - velocity);
     }
@@ -365,7 +409,7 @@ public class SteeringBehaviours : MonoBehaviour {
     Vector3 Evade()
     {
         float dist = (target.transform.position - transform.position).magnitude;
-        float lookAhead = (dist / maxSpeed);
+        float lookAhead = (dist / Params.GetFloat("max_speed"));
 
         Vector3 targetPos = target.transform.position + (lookAhead * target.GetComponent<SteeringBehaviours>().velocity);
         return Flee(targetPos);
@@ -377,7 +421,7 @@ public class SteeringBehaviours : MonoBehaviour {
         makeFeelers();
         List<GameObject> tagged = new List<GameObject>();
         float minBoxLength = 20.0f;
-        float boxLength = minBoxLength + ((velocity.magnitude / maxSpeed) * minBoxLength * 2.0f);
+        float boxLength = minBoxLength + ((velocity.magnitude / Params.GetFloat("max_speed")) * minBoxLength * 2.0f);
 
         if (float.IsNaN(boxLength))
         {
@@ -385,7 +429,11 @@ public class SteeringBehaviours : MonoBehaviour {
         }
         // Matt Bucklands Obstacle avoidance
         // First tag obstacles in range
-        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");
+        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");            
+        if (obstacles.Length == 0)
+        {
+            return Vector3.zero;
+        }
         foreach (GameObject obstacle in obstacles)
         {
             Vector3 toCentre = transform.position - obstacle.transform.position;
@@ -506,7 +554,7 @@ public class SteeringBehaviours : MonoBehaviour {
 
         float dist = (target - transform.position).magnitude;
 
-        float lookAhead = (dist / maxSpeed);
+        float lookAhead = (dist / Params.GetFloat("max_speed"));
 
         target = target + (lookAhead * leader.GetComponent<SteeringBehaviours>().velocity);
 
@@ -522,7 +570,7 @@ public class SteeringBehaviours : MonoBehaviour {
         {
             //target.transform.pos = new Vector3(20, 20, 0);
         }
-        float lookAhead = (dist / maxSpeed);
+        float lookAhead = (dist / Params.GetFloat("max_speed"));
 
         Vector3 targetPos = target.transform.position + (lookAhead * target.transform.GetComponent<SteeringBehaviours>().velocity);
         return Seek(targetPos);
@@ -538,7 +586,7 @@ public class SteeringBehaviours : MonoBehaviour {
             return Vector3.zero;
         }
         desiredVelocity.Normalize();
-        desiredVelocity *= maxSpeed;
+        desiredVelocity *= Params.GetFloat("max_speed");
         return (desiredVelocity - velocity);
     }
 
@@ -606,9 +654,9 @@ public class SteeringBehaviours : MonoBehaviour {
             return Vector3.zero;
         }
         const float DecelerationTweaker = 10.3f;
-        float ramped = maxSpeed * (distance / (slowingDistance * DecelerationTweaker));
+        float ramped = Params.GetFloat("max_speed") * (distance / (slowingDistance * DecelerationTweaker));
 
-        float clamped = Math.Min(ramped, maxSpeed);
+        float clamped = Math.Min(ramped, Params.GetFloat("max_speed"));
         Vector3 desired = clamped * (toTarget / distance);
 
         checkNaN(desired);
@@ -745,8 +793,8 @@ public class SteeringBehaviours : MonoBehaviour {
     {
         force = Vector3.zero;
         velocity = Vector3.zero;
-        mass = 10.0f;
-
+        mass = 1.0f;
+		flags = 0;
         calculationMethod = CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation;
         target = null;
         leader = null;

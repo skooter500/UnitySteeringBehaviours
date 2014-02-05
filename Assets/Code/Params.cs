@@ -27,7 +27,7 @@ class Params
     public static void Load(string filename)
     {
         dictionary.Clear();
-        StreamReader sw = new StreamReader(Application.dataPath + filename);
+		StreamReader sw = new StreamReader(Application.dataPath + "\\"  + filename);
         char[] delims = { '=' };
         while (!sw.EndOfStream)
         {

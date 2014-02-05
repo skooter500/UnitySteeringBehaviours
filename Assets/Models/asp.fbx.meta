@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ae40ad40d622221408b6a7356050667e
+guid: 344856d8abdaa774fa7179898b5c6628
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
@@ -7,7 +7,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: python
+    4300000: asp
     7400000: Default Take
     9500000: //RootNode
   materials:

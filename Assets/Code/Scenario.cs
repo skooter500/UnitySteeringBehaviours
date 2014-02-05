@@ -1,6 +1,13 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+
 public abstract class Scenario
 {
+    public GameObject leader = GameManager.Instance().leaderPrefab;
+    
     public abstract string Description();
     public abstract void SetUp();
 

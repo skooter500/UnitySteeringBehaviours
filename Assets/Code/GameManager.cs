@@ -22,8 +22,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         instance = this;
         Screen.showCursor = false;
-        currentScenario = new SeekScenario();
-
+        currentScenario = new PathFollowingScenario();
         currentScenario.SetUp();
 	}
 

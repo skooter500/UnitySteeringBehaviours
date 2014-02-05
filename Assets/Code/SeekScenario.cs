@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class SeekScenario : Scenario
 {
-    GameObject leader;
-
+        
     public override string Description()
     {
         return "Seek Demo";
@@ -15,9 +14,11 @@ public class SeekScenario : Scenario
 
     public override void SetUp()
     {
-        Params.Load("default.properties");
 
-        leader = (GameObject) GameManager.Instantiate(Resources.Load("cobramk3"));
+        Params.Load("default.txt");
+        leader = (GameObject) GameManager.Instantiate(leader);
+        leader.transform.localScale = Vector3.one;
+
         leader.AddComponent<SteeringBehaviours>();
         leader.transform.position = new Vector3(-10, 20, 20);
         leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.seek);
@@ -49,6 +50,7 @@ public class SeekScenario : Scenario
 
     public override void Update()
     {
+        GameManager.PrintMessage("Leader: " + leader);
         GameManager.PrintVector("Seek leader Pos: ", leader.transform.position);
     }
 
