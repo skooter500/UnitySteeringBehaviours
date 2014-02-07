@@ -28,24 +28,15 @@ public class SeekScenario : Scenario
 
         //XNAGame.Instance.Leader = leader;
 
-        //Fighter camFighter = new Fighter();
-        //camFighter.Leader = leader;
-        //camFighter.offset = new Vector3(0, 5, 10);
-        //camFighter.Position = leader.Position + camFighter.offset;
-        //camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
-        //camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
-        //camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
-        //XNAGame.Instance.CamFighter = camFighter;
-        //children.Add(camFighter);
-
-        //Ground ground = new Ground();
-        //children.Add(ground);
-
-        //XNAGame.Instance.Ground = ground;
-        //foreach (Entity child in children)
-        //{
-        //    child.LoadContent();
-        //}
+        GameObject camFighter = new GameObject();
+        camFighter.AddComponent<SteeringBehaviours>();
+        camFighter.GetComponent<SteeringBehaviours>().leader = leader;
+        camFighter.GetComponent<SteeringBehaviours>().offset = new Vector3(0, 5, 10);
+        camFighter.transform.position = leader.transform.position + camFighter.GetComponent<SteeringBehaviours>().offset;
+        camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
+        camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+        camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+        GameManager.Instance().camFighter = camFighter;
     }
 
     public override void Update()

@@ -549,8 +549,7 @@ public class SteeringBehaviours : MonoBehaviour {
     {
         Vector3 target = Vector3.zero;
 
-        //target = offset + fighter.Leader.pos;
-        target = transform.TransformPoint(offset);
+        target = leader.transform.TransformPoint(offset);
 
         float dist = (target - transform.position).magnitude;
 

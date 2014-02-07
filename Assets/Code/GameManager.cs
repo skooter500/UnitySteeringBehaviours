@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour {
     Scenario currentScenario;
     StringBuilder message = new StringBuilder();
 
+    public GameObject camFighter;
+
     public GameObject boidPrefab;
     public GameObject attackerPrefab;
     public GameObject leaderPrefab;
@@ -15,6 +17,8 @@ public class GameManager : MonoBehaviour {
     static GameManager instance;
 	// Use this for initialization
 
+    bool camFollowing = false;
+
 	void Awake () {
 		DontDestroyOnLoad(this);
 	}
@@ -22,7 +26,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         instance = this;
         Screen.showCursor = false;
-        currentScenario = new PursueScenario();
+        currentScenario = new PathFollowingScenario();
         currentScenario.SetUp();
 	}
 
@@ -58,7 +62,19 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
+        PrintMessage("Press F1 to toggle cam following");
+        if (Input.GetKey(KeyCode.F1))
+        {
+            camFollowing = !camFollowing;
+        }
+
+        if (camFollowing)
+        {
+            GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
+            camera.transform.position = camFighter.transform.position;
+            camera.transform.rotation= camFighter.transform.rotation;
+        }
+
         currentScenario.Update();
 	}
 }
