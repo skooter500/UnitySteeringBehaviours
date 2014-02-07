@@ -7,6 +7,8 @@ using UnityEngine;
 public abstract class Scenario
 {
     public GameObject leader = GameManager.Instance().leaderPrefab;
+    public GameObject boid = GameManager.Instance().boidPrefab;
+    
     
     public abstract string Description();
     public abstract void SetUp();

@@ -17,7 +17,6 @@ class PathFollowingScenario:Scenario
         Params.Load("default.txt");
 
         leader = (GameObject)GameManager.Instantiate(leader);
-        leader.transform.localScale = Vector3.one;
         leader.AddComponent<SteeringBehaviours>();
         leader.transform.position = new Vector3(-20, 5, 50);
        
@@ -35,6 +34,19 @@ class PathFollowingScenario:Scenario
         leader.GetComponent<SteeringBehaviours>().turnOffAll();
         leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.follow_path);
         leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+
+        //GameObject camFighter = new GameObject();
+        //camFighter.AddComponent<SteeringBehaviours>();
+        //camFighter.GetComponent<SteeringBehaviours>().leader = 
+        //camFighter.Leader = fighter;
+        //camFighter.offset = new Vector3(0, 5, 10);
+        //camFighter.Position = fighter.Position + camFighter.offset;
+        //camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
+        //camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+        //camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+        //XNAGame.Instance.CamFighter = camFighter;
+        //children.Add(camFighter);
+
         
     }
 

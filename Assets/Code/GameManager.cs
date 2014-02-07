@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         instance = this;
         Screen.showCursor = false;
-        currentScenario = new PathFollowingScenario();
+        currentScenario = new PursueScenario();
         currentScenario.SetUp();
 	}
 

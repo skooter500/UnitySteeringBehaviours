@@ -21,8 +21,8 @@ public class SteeringBehaviours : MonoBehaviour {
     List<Vector3> Feelers = new List<Vector3>();
 
     // Values required to implement certain behaviours
-    private GameObject target; // required for evade
-    private GameObject leader; // required for offset pursuit
+    public GameObject target; // required for evade
+    public GameObject leader; // required for offset pursuit
     private Vector3 wanderTargetPos;
     public Vector3 seekTargetPos;
     public Vector3 offset;
@@ -564,15 +564,12 @@ public class SteeringBehaviours : MonoBehaviour {
 
     Vector3 Pursue()
     {
-        float dist = (target.transform.position - transform.position).magnitude;
+        Vector3 toTarget = leader.transform.position - transform.position;
+        float dist = toTarget.magnitude;
+        float time = dist / velocity.magnitude;
 
-        if (dist < 1.0f)
-        {
-            //target.transform.pos = new Vector3(20, 20, 0);
-        }
-        float lookAhead = (dist / Params.GetFloat("max_speed"));
+        Vector3 targetPos = leader.transform.position + (time * leader.GetComponent<SteeringBehaviours>().velocity);
 
-        Vector3 targetPos = target.transform.position + (lookAhead * target.transform.GetComponent<SteeringBehaviours>().velocity);
         return Seek(targetPos);
     }
 
@@ -601,6 +598,17 @@ public class SteeringBehaviours : MonoBehaviour {
         }
         return Seek(randomWalkTarget);
     }
+
+    //float dist = (target.transform.position - transform.position).magnitude;
+
+    //    if (dist < 1.0f)
+    //    {
+    //        //target.transform.pos = new Vector3(20, 20, 0);
+    //    }
+    //    float lookAhead = (dist / Params.GetFloat("max_speed"));
+
+    //    Vector3 targetPos = target.transform.position + (lookAhead * target.transform.GetComponent<SteeringBehaviours>().velocity);
+    //    return Seek(targetPos);
 
     Vector3 Wander()
     {

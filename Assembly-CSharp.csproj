@@ -53,6 +53,7 @@
      <Compile Include="Assets\Code\Path.cs" />
      <Compile Include="Assets\Code\PathFollowingScenario.cs" />
      <Compile Include="Assets\Code\Perception.cs" />
+     <Compile Include="Assets\Code\PursueScenario.cs" />
      <Compile Include="Assets\Code\Ray.cs" />
      <Compile Include="Assets\Code\Rotate.cs" />
      <Compile Include="Assets\Code\RotateScript.cs" />
