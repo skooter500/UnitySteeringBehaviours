@@ -12,6 +12,7 @@ Steering_Data
 # ===================================== #
 ExportedObj/
 *.svd
+*.exe
 *.userprefs
 *.pidb
 *.suo
