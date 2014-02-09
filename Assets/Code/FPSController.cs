@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Steering
+namespace BGE
 {
     public class FPSController : MonoBehaviour
     {

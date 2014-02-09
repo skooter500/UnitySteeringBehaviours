@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Steering;
+using BGE;
 
-namespace Steering.States
+namespace BGE.States
 {
     public class IdleState:State
     {
@@ -32,7 +32,7 @@ namespace Steering.States
             entity.GetComponent<SteeringBehaviours>().path.Waypoints.Clear();
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             float range = 30.0f;           
             // Can I see the leader?
@@ -40,8 +40,7 @@ namespace Steering.States
             if ((leader.transform.position - entity.transform.position).magnitude < range)
             {
                 // Is the leader inside my FOV
-                AIFighter fighter = (AIFighter)Entity;
-                fighter.SwicthState(new AttackingState(fighter));
+                entity.GetComponent<StateMachine>().SwicthState(new AttackingState(entity));
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Steering.Scenarios
+namespace BGE.Scenarios
 {
     class ObstacleAvoidanceScenario : Scenario
     {
@@ -14,7 +14,7 @@ namespace Steering.Scenarios
             return "Obstacle Avoidance Demo";
         }
 
-        public override void SetUp()
+        public override void Start()
         {
             Params.Load("default.txt");
 

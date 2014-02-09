@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Steering.States
+namespace BGE.States
 {
     public abstract class State
     {
@@ -20,6 +20,6 @@ namespace Steering.States
         public abstract void Enter();
         public abstract void Exit();
 
-        public abstract void Update(float gameTime);
+        public abstract void Update();
     }
 }

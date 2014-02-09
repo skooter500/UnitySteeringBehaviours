@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Steering.Scenarios
+namespace BGE.Scenarios
 {
     class PursueScenario : Scenario
     {
@@ -12,7 +12,7 @@ namespace Steering.Scenarios
         {
             return "Pursuit Demo";
         }
-        public override void SetUp()
+        public override void Start()
         {
             Params.Load("default.txt");
             leader = CreateBoid(new Vector3(10, 5, 10), leaderPrefab);

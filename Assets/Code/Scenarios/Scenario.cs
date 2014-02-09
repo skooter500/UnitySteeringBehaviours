@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 
-namespace Steering.Scenarios
+namespace BGE.Scenarios
 {
     public abstract class Scenario
     {
@@ -15,7 +15,7 @@ namespace Steering.Scenarios
         public GameObject boidPrefab = SteeringManager.Instance().boidPrefab;
 
         public abstract string Description();
-        public abstract void SetUp();
+        public abstract void Start();
 
         public GameObject leader;
 

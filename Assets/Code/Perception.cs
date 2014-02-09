@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Steering
+namespace BGE
 {
     public class Perception : MonoBehaviour
     {

@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Steering.Scenarios;
+using BGE.Scenarios;
 
-namespace Steering
+namespace BGE
 {
     public class SteeringManager : MonoBehaviour
     {
@@ -44,7 +44,7 @@ namespace Steering
             scenarios.Add(new ObstacleAvoidanceScenario());
             scenarios.Add(new FlockingScenario());
             currentScenario = scenarios[0];
-            currentScenario.SetUp();
+            currentScenario.Start();
 
         }
 
@@ -74,7 +74,7 @@ namespace Steering
                     {
                         currentScenario.TearDown();
                         currentScenario = scenarios[i];
-                        currentScenario.SetUp();
+                        currentScenario.Start();
                     }
                 }
 
