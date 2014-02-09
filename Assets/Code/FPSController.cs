@@ -65,8 +65,8 @@ public class FPSController : MonoBehaviour {
             transform.position += gameObject.transform.right * Time.deltaTime * speed;
         }
 
-        GameManager.PrintVector("Cam pos: ", transform.position);
-        GameManager.PrintVector("Cam forward: ", transform.position);
+        SteeringManager.PrintVector("Cam pos: ", transform.position);
+        SteeringManager.PrintVector("Cam forward: ", transform.forward);
 
         mouseX = Input.GetAxis("Mouse X");
         mouseY = Input.GetAxis("Mouse Y");

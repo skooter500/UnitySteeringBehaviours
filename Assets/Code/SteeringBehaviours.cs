@@ -13,9 +13,6 @@ public class SteeringBehaviours : MonoBehaviour {
     
     public float mass;
 
-    public bool drawFeelers = false;
-    public bool drawAxis = false;
-
     public enum CalculationMethods { WeightedTruncatedSum, WeightedTruncatedRunningSumWithPrioritisation, PrioritisedDithering };
     CalculationMethods calculationMethod;
 
@@ -30,6 +27,9 @@ public class SteeringBehaviours : MonoBehaviour {
     public Vector3 offset;
     private Vector3 randomWalkTarget;
     public Path path = new Path();
+
+    Color debugLineColour = Color.cyan;
+
 
     #region Flags
     public enum behaviour_type
@@ -517,7 +517,7 @@ public class SteeringBehaviours : MonoBehaviour {
                     force.y = -force.y;
                 }
                 
-                Debug.DrawLine(transform.position, transform.position + transform.forward * boxLength, Color.blue);
+                Debug.DrawLine(transform.position, transform.position + transform.forward * boxLength, debugLineColour);
                 //apply a braking force proportional to the obstacle's distance from
                 //the vehicle.
                 const float brakingWeight = 40.0f;
@@ -554,10 +554,10 @@ public class SteeringBehaviours : MonoBehaviour {
     {
         Vector3 toTarget = leader.transform.position - transform.position;
         float dist = toTarget.magnitude;
-        float time = dist / velocity.magnitude;
+        float time = dist / Params.GetFloat("max_speed");
 
         Vector3 targetPos = leader.transform.position + (time * leader.GetComponent<SteeringBehaviours>().velocity);
-
+        Debug.DrawLine(transform.position, targetPos, debugLineColour);
         return Seek(targetPos);
     }
 
@@ -587,16 +587,7 @@ public class SteeringBehaviours : MonoBehaviour {
         return Seek(randomWalkTarget);
     }
 
-    //float dist = (target.transform.position - transform.position).magnitude;
-
-    //    if (dist < 1.0f)
-    //    {
-    //        //target.transform.pos = new Vector3(20, 20, 0);
-    //    }
-    //    float lookAhead = (dist / Params.GetFloat("max_speed"));
-
-    //    Vector3 targetPos = target.transform.position + (lookAhead * target.transform.GetComponent<SteeringBehaviours>().velocity);
-    //    return Seek(targetPos);
+    
 
     Vector3 Wander()
     {
@@ -622,21 +613,24 @@ public class SteeringBehaviours : MonoBehaviour {
         {            
             if (!worldPlane.GetSide(feeler))
             {
-                float distance = worldPlane.GetDistanceToPoint(feeler);
+                float distance = Math.Abs(worldPlane.GetDistanceToPoint(feeler));
                 force += worldPlane.normal * distance;
             }
         }
 
         if (force.magnitude > 0.0)
         {
-            drawFeelers = true;
+            DrawFeelers();
         }
-        else
-        {
-            drawFeelers = false;
-        }
-        drawAxis = false;
         return force;
+    }
+
+    public void DrawFeelers()
+    {
+        foreach (Vector3 feeler in Feelers)
+        {
+            Debug.DrawLine(transform.position, feeler, debugLineColour);
+        }
     }
 
     public Vector3 Arrive(Vector3 target)

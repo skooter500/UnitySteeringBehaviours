@@ -13,21 +13,14 @@ class PursueScenario:Scenario
     public override void SetUp()
     {
         Params.Load("default.txt");
-        leader = (GameObject) GameObject.Instantiate(leader);
-        leader.transform.position = new Vector3(10, 5, 10);
-        leader.AddComponent<SteeringBehaviours>();
+        leader = CreateBoid(new Vector3(10, 5, 10), leaderPrefab);
         leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.seek);
         leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(100, 5, 100);
 
-        boid = (GameObject)GameObject.Instantiate(boid);
-        boid.transform.position = new Vector3(25, 5, 50);
-        boid.AddComponent<SteeringBehaviours>();
+        GameObject boid = CreateBoid(new Vector3(25, 5, 50), boidPrefab);
         boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.pursuit);
         boid.GetComponent<SteeringBehaviours>().leader = leader;
-    }
 
-    public override void TearDown()
-    {
-        
+        CreateCamFollower(boid, new Vector3(0, 5, -10));
     }
 }

@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Code\FPSController.cs" />
-     <Compile Include="Assets\Code\GameManager.cs" />
+     <Compile Include="Assets\Code\FlockingScenario.cs" />
      <Compile Include="Assets\Code\MoveSTuff.cs" />
      <Compile Include="Assets\Code\ObstacleAvoidanceScenario.cs" />
      <Compile Include="Assets\Code\Params.cs" />
@@ -63,6 +63,7 @@
      <Compile Include="Assets\Code\Sphere.cs" />
      <Compile Include="Assets\Code\SteeringBehaviours.cs" />
      <Compile Include="Assets\Code\SteeringController.cs" />
+     <Compile Include="Assets\Code\SteeringManager.cs" />
      <Compile Include="Assets\Code\Utilities.cs" />
      <Compile Include="Assets\Code\VectorDrawer.cs" />
      <None Include="Assets\flocking.txt" />

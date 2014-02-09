@@ -21,7 +21,7 @@ public class Perception : MonoBehaviour {
         {
             message = "In range";
         }
-        GameManager.PrintMessage(message);
+        SteeringManager.PrintMessage(message);
         Debug.Log("" + message);
 
         toOtherShip.Normalize();
@@ -29,22 +29,22 @@ public class Perception : MonoBehaviour {
         float dot = Vector3.Dot(toOtherShip, transform.forward);
         if (dot < 0)
         {
-            GameManager.PrintMessage("Behind");
+            SteeringManager.PrintMessage("Behind");
         }
         else
         {
-            GameManager.PrintMessage("In front");
+            SteeringManager.PrintMessage("In front");
         }
 
         float fov = Mathf.Deg2Rad * (45.0f / 2.0f);
         float angle = Mathf.Acos(dot);
         if (angle < fov)
         {
-            GameManager.PrintMessage("Inside FOV");
+            SteeringManager.PrintMessage("Inside FOV");
         }
         else
         {
-            GameManager.PrintMessage("Outside FOV");
+            SteeringManager.PrintMessage("Outside FOV");
         }
 	}
 }
