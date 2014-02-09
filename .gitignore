@@ -5,6 +5,7 @@ Temp/
 Obj/
 UnityGenerated/
 Library/
+Steering_Data
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -14,6 +15,7 @@ ExportedObj/
 *.userprefs
 *.pidb
 *.suo
+*.pdb
 *.user
 *.unityproj
 *.booproj

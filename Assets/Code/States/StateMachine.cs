@@ -18,6 +18,7 @@ namespace BGE.States
         {
             if (currentState != null)
             {
+                SteeringManager.PrintMessage("Current state: " + currentState.Description());
                 currentState.Update();
             }
         }

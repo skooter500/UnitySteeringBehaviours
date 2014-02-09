@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 namespace BGE.States
 {
     class AttackingState:State
     {
         float timeShot = 0.25f;
+
+        public override string Description()
+        {
+            return "Attacking State";
+        }
 
         public AttackingState(GameObject entity):base(entity)
         {
@@ -32,7 +33,7 @@ namespace BGE.States
 
         public override void Update()
         {
-            float range = 30.0f;
+            float range = 50.0f;
             timeShot += Time.deltaTime;
             float fov = Mathf.PI / 4.0f;
             // Can I see the leader?

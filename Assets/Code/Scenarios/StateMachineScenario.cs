@@ -16,17 +16,20 @@ namespace BGE.Scenarios
 
         public override void Start()
         {
-            Vector3 leaderPos = new Vector3(-50, 50, 80);
-            leader = CreateBoid(leaderPos, leaderPrefab);
-            leader.GetComponent<SteeringBehaviours>().
-            fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
-            fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
-            fighter.Position = new Vector3(10, 50, 0);
-            fighter.TargetPos = aiFighter.Position + new Vector3(-50, 0, -80);
+            Params.Load("default.txt");
+            Vector3 aiPos = new Vector3(-20, 50, 50);
 
-            GameObject aiBoid = CreateBoid(new Vector3(-20, 50, 50), boidPrefab);
+            leader = CreateBoid(new Vector3(10, 50, 0), leaderPrefab);
+            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.arrive);
+            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+            leader.GetComponent<SteeringBehaviours>().seekTargetPos = aiPos + new Vector3(0, 0, 200);
+
+            GameObject aiBoid = CreateBoid(aiPos, boidPrefab);
             aiBoid.AddComponent<StateMachine>();
-            aiBoid.GetComponent<StateMachine>().SwicthState(new IdleState(leader));
+            aiBoid.GetComponent<StateMachine>().SwicthState(new IdleState(aiBoid));
+
+            CreateCamFollower(leader, new Vector3(0, 5, -10));
             
         }
 	}

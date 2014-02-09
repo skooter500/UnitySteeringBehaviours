@@ -47,23 +47,28 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Code\FPSController.cs" />
-     <Compile Include="Assets\Code\MoveSTuff.cs" />
+     <Compile Include="Assets\Code\Lazer.cs" />
+     <Compile Include="Assets\Code\MoveStuff.cs" />
+     <Compile Include="Assets\Code\Node.cs" />
      <Compile Include="Assets\Code\Params.cs" />
      <Compile Include="Assets\Code\Path.cs" />
+     <Compile Include="Assets\Code\PathFinder.cs" />
      <Compile Include="Assets\Code\Perception.cs" />
      <Compile Include="Assets\Code\Ray.cs" />
      <Compile Include="Assets\Code\Rotate.cs" />
-     <Compile Include="Assets\Code\RotateScript.cs" />
      <Compile Include="Assets\Code\Scenarios\FlockingScenario.cs" />
      <Compile Include="Assets\Code\Scenarios\ObstacleAvoidanceScenario.cs" />
+     <Compile Include="Assets\Code\Scenarios\PathFindingScenario.cs" />
      <Compile Include="Assets\Code\Scenarios\PathFollowingScenario.cs" />
      <Compile Include="Assets\Code\Scenarios\PursueScenario.cs" />
      <Compile Include="Assets\Code\Scenarios\Scenario.cs" />
      <Compile Include="Assets\Code\Scenarios\SeekScenario.cs" />
+     <Compile Include="Assets\Code\Scenarios\StateMachineScenario.cs" />
      <Compile Include="Assets\Code\Sphere.cs" />
      <Compile Include="Assets\Code\States\AttackingState.cs" />
      <Compile Include="Assets\Code\States\IdleState.cs" />
      <Compile Include="Assets\Code\States\State.cs" />
+     <Compile Include="Assets\Code\States\StateMachine.cs" />
      <Compile Include="Assets\Code\SteeringBehaviours.cs" />
      <Compile Include="Assets\Code\SteeringController.cs" />
      <Compile Include="Assets\Code\SteeringManager.cs" />

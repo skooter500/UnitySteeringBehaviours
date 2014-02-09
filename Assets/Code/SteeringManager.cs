@@ -43,6 +43,8 @@ namespace BGE
             scenarios.Add(new PathFollowingScenario());
             scenarios.Add(new ObstacleAvoidanceScenario());
             scenarios.Add(new FlockingScenario());
+            scenarios.Add(new StateMachineScenario());
+            scenarios.Add(new PathFindingScenario());
             currentScenario = scenarios[0];
             currentScenario.Start();
 

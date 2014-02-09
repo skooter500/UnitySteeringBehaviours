@@ -8,6 +8,12 @@ namespace BGE.States
     public class IdleState:State
     {
         static Vector3 initialPos = Vector3.zero;
+
+        public override string Description()
+        {
+            return "Idle State";
+        }
+
         public IdleState(GameObject entity):base(entity)
         {
         }
@@ -19,10 +25,11 @@ namespace BGE.States
                 initialPos = entity.transform.position;
             }
             entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos);
-            entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos + new Vector3(-50, 0, -80));
-            entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos + new Vector3(0, 0, -160));
-            entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos + new Vector3(50, 0, -80));
-            entity.GetComponent<SteeringBehaviours>().path.Looped = true;
+            entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos + new Vector3(-50, 0, 80));
+            entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos + new Vector3(0, 0, 160));
+            entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos + new Vector3(50, 0, 80));
+            entity.GetComponent<SteeringBehaviours>().path.Looped = true;            
+            entity.GetComponent<SteeringBehaviours>().path.draw = true;
             entity.GetComponent<SteeringBehaviours>().turnOffAll();
             entity.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.follow_path);
             entity.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
@@ -34,7 +41,7 @@ namespace BGE.States
 
         public override void Update()
         {
-            float range = 30.0f;           
+            float range = 50.0f;           
             // Can I see the leader?
             GameObject leader = SteeringManager.Instance().currentScenario.leader;
             if ((leader.transform.position - entity.transform.position).magnitude < range)

@@ -11,8 +11,8 @@ namespace BGE
         public void Update()
         {
             float speed = 5.0f;
-            float width = Params.GetFloat("world_range");
-            float height = Params.GetFloat("world_range");
+            float width = 500;
+            float height = 500;
 
             if ((transform.position.x < -(width / 2)) || (transform.position.x > width / 2) || (transform.position.z < -(height / 2)) || (transform.position.z > height / 2) || (transform.position.y < 0) || (transform.position.y > 100))
             {

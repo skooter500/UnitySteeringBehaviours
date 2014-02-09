@@ -12,6 +12,8 @@ namespace BGE.States
             this.entity = entity;
         }
 
+        public abstract string Description();
+
         public GameObject Entity
         {
             get { return entity; }
