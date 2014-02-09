@@ -49,6 +49,7 @@
      <Compile Include="Assets\Code\FPSController.cs" />
      <Compile Include="Assets\Code\GameManager.cs" />
      <Compile Include="Assets\Code\MoveSTuff.cs" />
+     <Compile Include="Assets\Code\ObstacleAvoidanceScenario.cs" />
      <Compile Include="Assets\Code\Params.cs" />
      <Compile Include="Assets\Code\Path.cs" />
      <Compile Include="Assets\Code\PathFollowingScenario.cs" />

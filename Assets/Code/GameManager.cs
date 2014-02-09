@@ -12,8 +12,8 @@ public class GameManager : MonoBehaviour {
     public GameObject boidPrefab;
     public GameObject attackerPrefab;
     public GameObject leaderPrefab;
-    public GameObject seekerPrefab;
-
+    public GameObject ground;
+    
     static GameManager instance;
 	// Use this for initialization
 
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
         instance = this;
         Screen.showCursor = false;
-        currentScenario = new PathFollowingScenario();
+        currentScenario = new ObstacleAvoidanceScenario();
         currentScenario.SetUp();
 	}
 
@@ -41,6 +41,14 @@ public class GameManager : MonoBehaviour {
         if (Event.current.type == EventType.Repaint)
         {
             message.Length = 0;
+        }
+
+        if (Event.current.type == EventType.KeyDown)
+        {
+            if (Event.current.keyCode == KeyCode.F1)
+            {
+                camFollowing = !camFollowing;
+            }
         }
     }
 
@@ -63,10 +71,6 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         PrintMessage("Press F1 to toggle cam following");
-        if (Input.GetKey(KeyCode.F1))
-        {
-            camFollowing = !camFollowing;
-        }
 
         if (camFollowing)
         {

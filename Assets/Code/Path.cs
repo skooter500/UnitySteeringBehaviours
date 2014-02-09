@@ -34,7 +34,6 @@ public class Path
 
     public void Draw()
     {
-        Debug.Log("In Path draw" + draw + " " + waypoints.Count());
         if (draw)
         {
             for (int i = 1; i < waypoints.Count(); i++)

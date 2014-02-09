@@ -8,6 +8,8 @@ public class SteeringBehaviours : MonoBehaviour {
     public Vector3 force;
     public Vector3 velocity;
     public Vector3 acceleration;
+
+    public float myRadius;
     
     public float mass;
 
@@ -192,16 +194,19 @@ public class SteeringBehaviours : MonoBehaviour {
     private Vector3 calculateWeightedPrioritised()
     {
         Vector3 force = Vector3.zero;
-        Vector3 steeringForce = Vector3.zero;      
+        Vector3 steeringForce = Vector3.zero;
 
         if (isOn(behaviour_type.obstacle_avoidance))
         {
             force = ObstacleAvoidance() * Params.GetWeight("obstacle_avoidance_weight");
+
             if (!accumulateForce(ref steeringForce, force))
             {
                 return steeringForce;
             }
         }
+       
+                
         checkNaN(force);
         if (isOn(behaviour_type.wall_avoidance))
         {
@@ -443,7 +448,7 @@ public class SteeringBehaviours : MonoBehaviour {
                 tagged.Add(obstacle);
             }            
         }
-
+      
         float distToClosestIP = float.MaxValue;
         GameObject closestIntersectingObstacle = null;
         Vector3 localPosOfClosestObstacle = Vector3.zero;
@@ -452,18 +457,16 @@ public class SteeringBehaviours : MonoBehaviour {
         foreach (GameObject o in tagged)
         {
             Vector3 localPos = transform.InverseTransformPoint(o.transform.position);
-            //Vector3 localPos = o.pos - fighter.pos;
-
+            
             // If the local position has a positive Z value then it must lay
             // behind the agent. (in which case it can be ignored)
-            if (localPos.z <= 0)
+            if (localPos.z >= 0)
             {
                 // If the distance from the x axis to the object's position is less
                 // than its radius + half the width of the detection box then there
                 // is a potential intersection.
 
-                float myRadius = gameObject.GetComponent<Renderer>().bounds.extents.magnitude;
-                float obstacleRadius = o.GetComponent<Renderer>().bounds.extents.magnitude;
+                float obstacleRadius = o.transform.localScale.x / 2;
                 float expandedRadius = myRadius + obstacleRadius;
                 if ((Math.Abs(localPos.y) < expandedRadius) && (Math.Abs(localPos.x) < expandedRadius))
                 {
@@ -498,10 +501,7 @@ public class SteeringBehaviours : MonoBehaviour {
                 // Calculate Z Axis braking  force
                 float multiplier = 200 * (1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength);
 
-
-
                 //calculate the lateral force
-                float myRadius = gameObject.GetComponent<Renderer>().bounds.extents.magnitude;
                 float obstacleRadius = closestIntersectingObstacle.GetComponent<Renderer>().bounds.extents.magnitude;
                 float expandedRadius = myRadius + obstacleRadius;
                 force.x = (expandedRadius - Math.Abs(localPosOfClosestObstacle.x)) * multiplier;
@@ -516,18 +516,7 @@ public class SteeringBehaviours : MonoBehaviour {
                 {
                     force.y = -force.y;
                 }
-
-                /*if (fighter.pos.X < o.pos.X)
-                {
-                    force.X = -force.X;
-                }
-                     
-                if (fighter.pos.Y < o.pos.Y)
-                 * 
-                {
-                    force.Y = -force.Y;
-                }*/
-
+                
                 Debug.DrawLine(transform.position, transform.position + transform.forward * boxLength, Color.blue);
                 //apply a braking force proportional to the obstacle's distance from
                 //the vehicle.
@@ -708,7 +697,7 @@ public class SteeringBehaviours : MonoBehaviour {
     {
         tagged.Clear();
 
-        GameObject[] steerables = GameObject.FindGameObjectsWithTag("steerable");
+        GameObject[] steerables = GameObject.FindGameObjectsWithTag("boid");
         foreach (GameObject steerable in steerables)
         {
             if (steerable != gameObject)
@@ -793,7 +782,7 @@ public class SteeringBehaviours : MonoBehaviour {
 
     // Use this for initialization
 	void Start () {
-	
+        myRadius = 5.0f;
 	}
 	
 	public SteeringBehaviours()

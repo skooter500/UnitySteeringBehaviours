@@ -42,8 +42,8 @@ class PathFollowingScenario:Scenario
         camFighter.GetComponent<SteeringBehaviours>().offset = new Vector3(0, 5, 10);
         camFighter.transform.position = leader.transform.position + camFighter.GetComponent<SteeringBehaviours>().offset;
         camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
-        //camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
-        //camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+        camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+        camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
         GameManager.Instance().camFighter = camFighter;
 
         
