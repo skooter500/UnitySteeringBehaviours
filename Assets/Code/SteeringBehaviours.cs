@@ -30,6 +30,7 @@ public class SteeringBehaviours : MonoBehaviour {
 
     Color debugLineColour = Color.cyan;
 
+    float timeDelta;
 
     #region Flags
     public enum behaviour_type
@@ -341,13 +342,15 @@ public class SteeringBehaviours : MonoBehaviour {
         SteeringBehaviours.checkNaN(force);
         Vector3 newAcceleration = force / mass;
 
-        if (Time.deltaTime > 0.0f)
+        timeDelta = Time.deltaTime * Params.GetFloat(Params.TIME_MODIFIER_KEY);
+
+        if (timeDelta > 0.0f)
         {
-            smoothRate = Utilities.Clip(9.0f * Time.deltaTime, 0.15f, 0.4f) / 2.0f;
+            smoothRate = Utilities.Clip(9.0f * timeDelta, 0.15f, 0.4f) / 2.0f;
             Utilities.BlendIntoAccumulator(smoothRate, newAcceleration, ref acceleration);
         }
 
-        velocity += acceleration * Time.deltaTime;
+        velocity += acceleration * timeDelta;
 
         float speed = velocity.magnitude;
         if (speed > Params.GetFloat("max_speed"))
@@ -355,7 +358,7 @@ public class SteeringBehaviours : MonoBehaviour {
             velocity.Normalize();
             velocity *= Params.GetFloat("max_speed");
         }
-        transform.position += velocity * Time.deltaTime;
+        transform.position += velocity * timeDelta;
 
 
         // the length of this global-upward-pointing vector controls the vehicle's
@@ -367,7 +370,7 @@ public class SteeringBehaviours : MonoBehaviour {
         // combined banking, sum of UP due to turning and global UP
         Vector3 bankUp = accelUp + globalUp;
         // blend bankUp into vehicle's UP basis vector
-        smoothRate = Time.deltaTime * 3.0f;
+        smoothRate = timeDelta * 3.0f;
         Vector3 tempUp = transform.up;
         Utilities.BlendIntoAccumulator(smoothRate, bankUp, ref tempUp);
 
@@ -591,7 +594,7 @@ public class SteeringBehaviours : MonoBehaviour {
 
     Vector3 Wander()
     {
-        float jitterTimeSlice = Params.GetFloat("wander_jitter") * Time.deltaTime;
+        float jitterTimeSlice = Params.GetFloat("wander_jitter") * timeDelta;
 
         Vector3 toAdd = new Vector3(RandomClamped(), RandomClamped(), RandomClamped()) * jitterTimeSlice;
         wanderTargetPos += toAdd;

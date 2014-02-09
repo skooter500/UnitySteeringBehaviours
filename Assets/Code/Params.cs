@@ -7,11 +7,17 @@ using System.IO;
 
 class Params
 {
+    public const string TIME_MODIFIER_KEY = "time_modifier";
     private static Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
     public static float GetFloat(string key)
     {
         return float.Parse("" + dictionary[key]);
+    }
+
+    public static void Put(string key, object value)
+    {
+        dictionary[key] = value;
     }
 
     public static float GetWeight(string key)
@@ -40,6 +46,8 @@ class Params
                 dictionary[key] = value;
             }
         }
+
+        Params.Put(Params.TIME_MODIFIER_KEY, 1.0f);
     }
 }
 
