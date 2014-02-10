@@ -19,11 +19,7 @@ namespace BGE.Scenarios
             Params.Load("default.txt");
 
             leader = CreateBoid(new Vector3(-20, 20, 20), leaderPrefab);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.seek);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
-            leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(-30, 30, 80);
-
+            
             CreateCamFollower(leader, new Vector3(0, 5, -10));
 
             GroundEnabled(true);

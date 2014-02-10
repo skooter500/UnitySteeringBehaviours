@@ -39,13 +39,7 @@ namespace BGE
             style.normal.textColor = Color.white;
 
             scenarios.Add(new SeekScenario());
-            scenarios.Add(new ArriveScenario());
-            scenarios.Add(new PursueScenario());
-            scenarios.Add(new PathFollowingScenario());
-            scenarios.Add(new ObstacleAvoidanceScenario());
-            scenarios.Add(new FlockingScenario());
-            scenarios.Add(new StateMachineScenario());
-            scenarios.Add(new PathFindingScenario());
+            
             currentScenario = scenarios[0];
             currentScenario.Start();
 
