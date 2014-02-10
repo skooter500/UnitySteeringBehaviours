@@ -39,6 +39,7 @@ namespace BGE
             style.normal.textColor = Color.white;
 
             scenarios.Add(new SeekScenario());
+            scenarios.Add(new ArriveScenario());
             scenarios.Add(new PursueScenario());
             scenarios.Add(new PathFollowingScenario());
             scenarios.Add(new ObstacleAvoidanceScenario());
@@ -89,6 +90,12 @@ namespace BGE
                 {
                     Params.Put(Params.TIME_MODIFIER_KEY, Params.GetFloat(Params.TIME_MODIFIER_KEY) - Time.deltaTime);
                 }
+
+                if (Event.current.keyCode == KeyCode.Escape)
+                {
+                    Application.Quit();
+                }
+                
             }
         }
 

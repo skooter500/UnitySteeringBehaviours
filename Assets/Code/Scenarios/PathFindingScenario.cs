@@ -13,6 +13,8 @@ namespace BGE.Scenarios
         Vector3 targetPos;
         Vector3 startPos;
 
+        bool lastPressed = false;
+
         public override string Description()
         {
             return "Path Finding Demo";
@@ -45,9 +47,53 @@ namespace BGE.Scenarios
             bool recalculate = false;
 
             SteeringManager.PrintMessage("Press P to smooth path");
-            SteeringManager.PrintMessage("Press O for 3D path");
+            //SteeringManager.PrintMessage("Press O for 3D path");
 
-            
+            if (Input.GetKeyDown(KeyCode.P) && ! lastPressed)
+            {
+                pathFinder.Smooth = !pathFinder.Smooth;
+                recalculate = true;
+            }
+
+            //if (Input.GetKeyDown(KeyCode.O) && !lastPressed)
+            //{
+            //    pathFinder.IsThreeD = !pathFinder.IsThreeD;
+            //    recalculate = true;
+            //}
+
+            GameObject camera = (GameObject) GameObject.FindGameObjectWithTag("MainCamera");
+
+            if (Input.GetMouseButton(0))
+            {
+                targetPos = camera.transform.position + camera.transform.forward * 100.0f;
+                targetPos.y = 0;
+                recalculate = true;
+            }
+
+            if (recalculate)
+            {
+                Path path = pathFinder.FindPath(startPos, targetPos);
+                if (path.Waypoints.Count == 0)
+                {
+                    leader.GetComponent<SteeringBehaviours>().turnOffAll();
+                }
+                else
+                {
+                    leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.follow_path);
+                }
+                leader.GetComponent<SteeringBehaviours>().path = path;
+                leader.GetComponent<SteeringBehaviours>().path.draw = true;
+                leader.GetComponent<SteeringBehaviours>().path.Next = 0;
+            }
+
+            if (Input.anyKeyDown)
+            {
+                lastPressed = true;
+            }
+            else
+            {
+                lastPressed = false;
+            }
 
             base.Update();
         }

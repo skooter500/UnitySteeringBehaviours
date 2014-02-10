@@ -36,9 +36,9 @@ namespace BGE.Scenarios
             CreateObstacle(new Vector3(5, 70, 320), 35);
 
             // Now make a fleet
-            int fleetSize = 5;
-            float xOff = 6;
-            float zOff = -6;
+            int fleetSize = 10;
+            float xOff = 12;
+            float zOff = -12;
             for (int i = 2; i < fleetSize; i++)
             {
                 for (int j = 0; j < i; j++)

@@ -12,6 +12,11 @@ namespace BGE
         public PathFinder()
         {
             obstacles = GameObject.FindGameObjectsWithTag("obstacle");
+            foreach (GameObject o in obstacles)
+            {
+                float radius = o.renderer.bounds.extents.magnitude;
+                radii.Add(radius);
+            }
         }
 
         bool isThreeD;
@@ -24,9 +29,12 @@ namespace BGE
 
         Dictionary<Vector3, Node> open = new Dictionary<Vector3, Node>();
         //PriorityQueue<Node> openPQ = new PriorityQueue<Node>();
+        //List<Node> openList = new List<Node>();
 
         Dictionary<Vector3, Node> closed = new Dictionary<Vector3, Node>();
         GameObject[] obstacles;
+        List<float> radii = new List<float>();
+        
 
         Vector3 start, end;
 
@@ -52,15 +60,15 @@ namespace BGE
             first.f = first.g = first.h = 0.0f;
             first.pos = this.start;
             open[this.start] = first;
+            //openList.Add(first);
             //openPQ.Enqueue(first);
 
             Node current = first;
             while (open.Count > 0)
             {
-                /*
-                current = openPQ.Dequeue();
-                float min = current.f;
-                */
+                //current = openPQ.Dequeue();
+                //float min = current.f;
+                
 
                 // Get the top of the q
                 float min = float.MaxValue;
@@ -72,7 +80,7 @@ namespace BGE
                         min = node.f;
                     }
                 }
-
+                
                 if (current.pos.Equals(this.end))
                 {
                     found = true;
@@ -80,6 +88,7 @@ namespace BGE
                 }
                 addAdjacentNodes(current);
                 open.Remove(current.pos);
+                //openList.Remove(current);
                 closed[current.pos] = current;
             }
             Path path = new Path();
@@ -93,7 +102,7 @@ namespace BGE
                 path.Waypoints.Add(current.pos);
             }
             long elapsed = DateTime.Now.Ticks - oldNow;
-            System.Console.WriteLine("A * took: " + (elapsed / 10000) + " milliseconds");
+            Debug.Log("A * took: " + (elapsed / 10000) + " milliseconds");
             if (smooth)
             {
                 SmoothPath(path);
@@ -255,10 +264,10 @@ namespace BGE
 
         private bool IsNavigable(Vector3 pos)
         {
-            foreach (GameObject o in obstacles)
+            for (int i = 0; i < obstacles.Count(); i ++)
             {
-                float radius = o.renderer.bounds.extents.magnitude;
-                if (Vector3.Distance(o.transform.position, pos) < radius)
+                GameObject o = obstacles[i];
+                if (Vector3.Distance(o.transform.position, pos) < radii[i])
                 {
                     return false;
                 }
@@ -283,6 +292,7 @@ namespace BGE
                         node.parent = parent;
                         //openPQ.Enqueue(node);
                         open[pos] = node;
+                        //openList.Add(node);
                     }
                     else
                     {
