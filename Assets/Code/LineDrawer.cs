@@ -73,7 +73,6 @@ namespace BGE
 
         void OnPostRender()
         {
-            Debug.Log("OnPostRender called" + lines.Count);
             CreateLineMaterial();
             // set the current material
             lineMaterial.SetPass(0);
