@@ -26,6 +26,8 @@ namespace BGE
 
         bool camFollowing = false;
         public bool showMessages = true;
+        public bool showVectors = false;
+        public bool showFeelers = false;
 
         void Awake()
         {
@@ -100,7 +102,17 @@ namespace BGE
 
                 if (Event.current.keyCode == KeyCode.F4)
                 {
-                    showMessages = ! showMessages;
+                    showMessages = !showMessages;
+                }
+
+                if (Event.current.keyCode == KeyCode.F5)
+                {
+                    showVectors = ! showVectors;
+                }
+
+                if (Event.current.keyCode == KeyCode.F6)
+                {
+                    showFeelers = !showFeelers;
                 }
 
                 if (Event.current.keyCode == KeyCode.Escape)
@@ -133,6 +145,8 @@ namespace BGE
             PrintMessage("Press F2 to increase timeDelta");
             PrintMessage("Press F3 to decrease timeDelta");
             PrintMessage("Press F4 to toggle messages");
+            PrintMessage("Press F5 to toggle vector drawing");
+            PrintMessage("Press F6 to toggle feeler drawing");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());

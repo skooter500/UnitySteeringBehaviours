@@ -8,17 +8,19 @@ namespace BGE
 {
     public class LineDrawer : MonoBehaviour
     {
-
+        public bool drawDebugLines;
         struct Line
         {
             public Vector3 start;
             public Vector3 end;
             public Color color;
-            public Line(Vector3 start, Vector3 end, Color color)
+            public bool isDebug;
+            public Line(Vector3 start, Vector3 end, Color color, bool isDebug)
             {
                 this.start = start;
                 this.end = end;
                 this.color = color;
+                this.isDebug = isDebug;
             }
         }
 
@@ -52,7 +54,36 @@ namespace BGE
 
         public static void DrawLine(Vector3 start, Vector3 end, Color colour)
         {
-            Instance().lines.Add(new Line(start, end, colour));
+            Instance().lines.Add(new Line(start, end, colour, false));
+        }
+
+        public static void DrawVectors(Transform transform)
+        {
+            float length = 20.0f;
+
+            DrawArrowLine(transform.position, transform.position + transform.forward * length, Color.red, transform.rotation);
+            DrawArrowLine(transform.position, transform.position + transform.right * length, Color.green, transform.rotation * Quaternion.AngleAxis(90, Vector3.up));
+            DrawArrowLine(transform.position, transform.position + transform.up * length, Color.blue, transform.rotation * Quaternion.AngleAxis(-90, Vector3.right));
+        }
+
+        public static void DrawArrowLine(Vector3 start, Vector3 end, Color color, Quaternion rot)
+        {
+            Instance().lines.Add(new Line(start, end, color, false));
+
+	        float side = 1;
+	        float back = -5;
+	        Vector3[] points = new Vector3[3];
+            points[0] = new Vector3(-side, 0, back);
+            points[1] = new Vector3(0, 0, 0);
+            points[2] = new Vector3(side, 0, back);
+	
+	        for (int i = 0 ; i < 3 ; i ++)
+	        {
+		        points[i] = (rot * points[i]) + end;
+	        }
+
+            Instance().lines.Add(new Line(points[0], points[1], color, false));
+            Instance().lines.Add(new Line(points[2], points[1], color, false));
         }
 
         void CreateLineMaterial()

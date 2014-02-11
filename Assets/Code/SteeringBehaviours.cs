@@ -345,6 +345,11 @@ namespace BGE
             SteeringBehaviours.checkNaN(force);
             Vector3 newAcceleration = force / mass;
 
+            if (SteeringManager.Instance().showVectors)
+            {
+                LineDrawer.DrawVectors(transform);
+            }
+
             timeDelta = Time.deltaTime * Params.GetFloat(Params.TIME_MODIFIER_KEY);
 
             if (timeDelta > 0.0f)
@@ -523,7 +528,10 @@ namespace BGE
                         force.y = -force.y;
                     }
 
-                    Debug.DrawLine(transform.position, transform.position + transform.forward * boxLength, debugLineColour);
+                    if (SteeringManager.Instance().showFeelers)
+                    {
+                        LineDrawer.DrawLine(transform.position, transform.position + transform.forward * boxLength, debugLineColour);                    
+                    }
                     //apply a braking force proportional to the obstacle's distance from
                     //the vehicle.
                     const float brakingWeight = 40.0f;
@@ -563,7 +571,10 @@ namespace BGE
             float time = dist / Params.GetFloat("max_speed");
 
             Vector3 targetPos = leader.transform.position + (time * leader.GetComponent<SteeringBehaviours>().velocity);
-            Debug.DrawLine(transform.position, targetPos, debugLineColour);
+            if (SteeringManager.Instance().showFeelers)
+            {
+                LineDrawer.DrawLine(transform.position, targetPos, debugLineColour);            
+            }
             return Seek(targetPos);
         }
 
@@ -633,10 +644,13 @@ namespace BGE
 
         public void DrawFeelers()
         {
-            foreach (Vector3 feeler in Feelers)
+            if (SteeringManager.Instance().showFeelers)
             {
-                Debug.DrawLine(transform.position, feeler, debugLineColour);
-            }
+                foreach (Vector3 feeler in Feelers)
+                {
+                    LineDrawer.DrawLine(transform.position, feeler, debugLineColour);
+                }
+            }            
         }
 
         public Vector3 Arrive(Vector3 target)
