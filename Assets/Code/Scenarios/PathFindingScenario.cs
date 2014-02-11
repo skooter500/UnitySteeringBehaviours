@@ -40,6 +40,8 @@ namespace BGE.Scenarios
             path.draw = true;
             leader.GetComponent<SteeringBehaviours>().path = path;
             leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.follow_path);
+
+            GroundEnabled(false);
         }
 
         public override void Update()
@@ -55,11 +57,11 @@ namespace BGE.Scenarios
                 recalculate = true;
             }
 
-            //if (Input.GetKeyDown(KeyCode.O) && !lastPressed)
-            //{
-            //    pathFinder.IsThreeD = !pathFinder.IsThreeD;
-            //    recalculate = true;
-            //}
+            if (Input.GetKeyDown(KeyCode.O) && !lastPressed)
+            {
+                pathFinder.IsThreeD = !pathFinder.IsThreeD;
+                recalculate = true;
+            }
 
             GameObject camera = (GameObject) GameObject.FindGameObjectWithTag("MainCamera");
 

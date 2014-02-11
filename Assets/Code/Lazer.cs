@@ -19,7 +19,7 @@ namespace BGE
                 Destroy(gameObject);
             }
             transform.position += transform.forward * speed;
-            Debug.DrawLine(transform.position, transform.position + transform.forward * 10.0f, Color.red);
+            LineDrawer.DrawLine(transform.position, transform.position + transform.forward * 10.0f, Color.red);
         }
 	}
 }

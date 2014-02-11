@@ -6,14 +6,15 @@ using BGE.Scenarios;
 
 namespace BGE
 {
+    
+
     public class SteeringManager : MonoBehaviour
     {
-
         List<Scenario> scenarios = new List<Scenario>();
-
+        
         public Scenario currentScenario;
         StringBuilder message = new StringBuilder();
-
+        
         public GameObject camFighter;
 
         public GameObject boidPrefab;
@@ -24,6 +25,7 @@ namespace BGE
         GUIStyle style = new GUIStyle();
 
         bool camFollowing = false;
+        public bool showMessages = true;
 
         void Awake()
         {
@@ -56,9 +58,14 @@ namespace BGE
             return instance;
         }
 
+        
+
         void OnGUI()
         {
-            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "" + message, style);
+            if (showMessages)
+            {
+                GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "" + message, style);
+            }
             if (Event.current.type == EventType.Repaint)
             {
                 message.Length = 0;
@@ -91,6 +98,11 @@ namespace BGE
                     Params.Put(Params.TIME_MODIFIER_KEY, Params.GetFloat(Params.TIME_MODIFIER_KEY) - Time.deltaTime);
                 }
 
+                if (Event.current.keyCode == KeyCode.F4)
+                {
+                    showMessages = ! showMessages;
+                }
+
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
                     Application.Quit();
@@ -114,13 +126,13 @@ namespace BGE
             Instance().message.Append(message + ": (" + v.x + ", " + v.y + ", " + v.z + ")\n");
         }
 
-
         // Update is called once per frame
         void Update()
         {
             PrintMessage("Press F1 to toggle cam following");
             PrintMessage("Press F2 to increase timeDelta");
             PrintMessage("Press F3 to decrease timeDelta");
+            PrintMessage("Press F4 to toggle messages");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());
@@ -135,7 +147,7 @@ namespace BGE
                 camera.transform.position = camFighter.transform.position;
                 camera.transform.rotation = camFighter.transform.rotation;
             }
-
+      
             currentScenario.Update();
         }
     }

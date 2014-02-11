@@ -40,11 +40,11 @@ namespace BGE
             {
                 for (int i = 1; i < waypoints.Count(); i++)
                 {
-                    Debug.DrawLine(waypoints[i - 1], waypoints[i], Color.cyan);
+                    LineDrawer.DrawLine(waypoints[i - 1], waypoints[i], Color.cyan);
                 }
                 if (looped && (waypoints.Count() > 0))
                 {
-                    Debug.DrawLine(waypoints[0], waypoints[waypoints.Count() - 1], Color.cyan);
+                    LineDrawer.DrawLine(waypoints[0], waypoints[waypoints.Count() - 1], Color.cyan);
                 }
             }
         }
