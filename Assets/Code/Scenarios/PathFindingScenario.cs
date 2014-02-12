@@ -48,8 +48,8 @@ namespace BGE.Scenarios
         {
             bool recalculate = false;
 
-            SteeringManager.PrintMessage("Press P to smooth path");
-            //SteeringManager.PrintMessage("Press O for 3D path");
+            SteeringManager.PrintMessage("Press P to toggle smooth paths");
+            SteeringManager.PrintMessage("Press O to toggle 3D paths");
 
             if (Input.GetKeyDown(KeyCode.P) && ! lastPressed)
             {
@@ -67,8 +67,13 @@ namespace BGE.Scenarios
 
             if (Input.GetMouseButton(0))
             {
-                targetPos = camera.transform.position + camera.transform.forward * 100.0f;
-                targetPos.y = 0;
+                Plane worldPlane = new Plane(new Vector3(0, 1, 0), 0);
+                Ray ray = new Ray(camera.transform.position, camera.transform.forward);
+                float distance = 0;
+                if (worldPlane.Raycast(ray, out distance))
+                {
+                    targetPos = camera.transform.position + (camera.transform.forward * distance);
+                }
                 recalculate = true;
             }
 
@@ -95,6 +100,11 @@ namespace BGE.Scenarios
             else
             {
                 lastPressed = false;
+            }
+
+            if (pathFinder.message != "")
+            {
+                SteeringManager.PrintMessage(pathFinder.message);
             }
 
             base.Update();

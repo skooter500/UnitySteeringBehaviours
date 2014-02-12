@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using BGE.Geom;
 
 namespace BGE
 {
     public class PathFinder
     {
         float dist = 5.0f;
+        public string message = "";
             
         public PathFinder()
         {
@@ -70,8 +72,15 @@ namespace BGE
             Node current = first;
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             int maxSize = 0;
+            stopwatch.Start();
+            bool timeout = false;
             while (open.Count > 0)
             {
+                if (stopwatch.ElapsedMilliseconds > 5000)
+                {
+                    timeout = true;
+                    break;
+                }
                 if (open.Count > maxSize)
                 {
                     maxSize = open.Count;
@@ -109,9 +118,21 @@ namespace BGE
                     current = current.parent;
                 }
                 path.Waypoints.Add(current.pos);
+                message = "A * took: " + stopwatch.ElapsedMilliseconds + " milliseconds. Open list: " + maxSize;
+
             }
-            long elapsed = DateTime.Now.Ticks - oldNow;
-            Debug.Log("A * took: " + (elapsed / 10000) + " milliseconds. Open List: " + maxSize);
+            else
+            {
+                if (timeout)
+                {
+                    message = "A* timed out after 5 seconds. Open list: " + maxSize;
+                }
+                else
+                {
+                    message = "No path found. Open list: " + maxSize;
+                }
+                
+            }
             if (smooth)
             {
                 SmoothPath(path);
@@ -378,7 +399,7 @@ namespace BGE
             {
                 float radius = o.renderer.bounds.extents.magnitude;
                 Sphere sphere = new Sphere(radius, o.transform.position);
-                Ray ray = new Ray();
+                BGE.Geom.Ray ray = new BGE.Geom.Ray();
                 ray.look = point1 - point0;
                 ray.look.Normalize();
                 ray.pos = point0;

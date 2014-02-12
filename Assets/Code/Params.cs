@@ -9,8 +9,12 @@ namespace BGE
 {
     class Params
     {
-        public const string TIME_MODIFIER_KEY = "time_modifier";
         private static Dictionary<string, object> dictionary = new Dictionary<string, object>();
+
+        public static bool showMessages = true;
+        public static bool drawVectors = false;
+        public static bool drawDebugLines = false;
+        public static float timeModifier;
 
         public static float GetFloat(string key)
         {
@@ -49,7 +53,7 @@ namespace BGE
                 }
             }
 
-            Params.Put(Params.TIME_MODIFIER_KEY, 1.0f);
+            timeModifier = 0.0f;
         }
     }
 }

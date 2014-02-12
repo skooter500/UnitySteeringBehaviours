@@ -25,10 +25,7 @@ namespace BGE
         GUIStyle style = new GUIStyle();
 
         bool camFollowing = false;
-        public bool showMessages = true;
-        public bool showVectors = false;
-        public bool showFeelers = false;
-
+        
         void Awake()
         {
             DontDestroyOnLoad(this);
@@ -64,7 +61,7 @@ namespace BGE
 
         void OnGUI()
         {
-            if (showMessages)
+            if (Params.showMessages)
             {
                 GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "" + message, style);
             }
@@ -90,36 +87,36 @@ namespace BGE
                     }
                 }
 
+                float timeModRate = 0.01f;
                 if (Event.current.keyCode == KeyCode.F2)
                 {
-                    Params.Put(Params.TIME_MODIFIER_KEY, Params.GetFloat(Params.TIME_MODIFIER_KEY) + Time.deltaTime);
+                    Params.timeModifier += Time.deltaTime * timeModRate;
                 }
 
                 if (Event.current.keyCode == KeyCode.F3)
                 {
-                    Params.Put(Params.TIME_MODIFIER_KEY, Params.GetFloat(Params.TIME_MODIFIER_KEY) - Time.deltaTime);
+                    Params.timeModifier -= Time.deltaTime * timeModRate;
                 }
 
                 if (Event.current.keyCode == KeyCode.F4)
                 {
-                    showMessages = !showMessages;
+                    Params.showMessages = !Params.showMessages;
                 }
 
                 if (Event.current.keyCode == KeyCode.F5)
                 {
-                    showVectors = ! showVectors;
+                    Params.drawVectors = !Params.drawVectors;
                 }
 
                 if (Event.current.keyCode == KeyCode.F6)
                 {
-                    showFeelers = !showFeelers;
+                    Params.drawDebugLines = !Params.drawDebugLines;
                 }
 
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
                     Application.Quit();
-                }
-                
+                }                
             }
         }
 
@@ -142,11 +139,11 @@ namespace BGE
         void Update()
         {
             PrintMessage("Press F1 to toggle cam following");
-            PrintMessage("Press F2 to increase timeDelta");
-            PrintMessage("Press F3 to decrease timeDelta");
+            PrintMessage("Press F2 to slow down");
+            PrintMessage("Press F3 to speed up");
             PrintMessage("Press F4 to toggle messages");
             PrintMessage("Press F5 to toggle vector drawing");
-            PrintMessage("Press F6 to toggle feeler drawing");
+            PrintMessage("Press F6 to toggle debug drawing");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());

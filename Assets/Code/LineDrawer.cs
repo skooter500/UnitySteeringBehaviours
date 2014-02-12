@@ -57,13 +57,21 @@ namespace BGE
             Instance().lines.Add(new Line(start, end, colour, false));
         }
 
+        public static void DrawTarget(Vector3 target, Color colour)
+        {
+            float dist = 1;
+            DrawLine(new Vector3(target.x - dist, target.y, target.z), new Vector3(target.x + dist, target.y, target.z), colour);
+            DrawLine(new Vector3(target.x, target.y - dist, target.z), new Vector3(target.x, target.y + dist, target.z), colour);
+            DrawLine(new Vector3(target.x, target.y, target.z - dist), new Vector3(target.x, target.y, target.z + dist), colour);
+        }        
+
         public static void DrawVectors(Transform transform)
         {
             float length = 20.0f;
 
-            DrawArrowLine(transform.position, transform.position + transform.forward * length, Color.red, transform.rotation);
-            DrawArrowLine(transform.position, transform.position + transform.right * length, Color.green, transform.rotation * Quaternion.AngleAxis(90, Vector3.up));
-            DrawArrowLine(transform.position, transform.position + transform.up * length, Color.blue, transform.rotation * Quaternion.AngleAxis(-90, Vector3.right));
+            DrawArrowLine(transform.position, transform.position + transform.forward * length, Color.blue, transform.rotation);
+            DrawArrowLine(transform.position, transform.position + transform.right * length, Color.red, transform.rotation * Quaternion.AngleAxis(90, Vector3.up));
+            DrawArrowLine(transform.position, transform.position + transform.up * length, Color.green, transform.rotation * Quaternion.AngleAxis(-90, Vector3.right));
         }
 
         public static void DrawArrowLine(Vector3 start, Vector3 end, Color color, Quaternion rot)

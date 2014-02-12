@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using BGE.Geom;
 
 namespace BGE
 {
     public class SteeringBehaviours : MonoBehaviour
     {
-
         public Vector3 force;
         public Vector3 velocity;
         public Vector3 acceleration;
@@ -71,10 +71,34 @@ namespace BGE
         {
             flags |= ((int)behaviour);
         }
+        
+        public void turnOff(behaviour_type behaviour)
+        {
+            flags &= ( ~ (int)behaviour);
+        }
 
         public void turnOffAll()
         {
             flags = (int)SteeringBehaviours.behaviour_type.none;
+        }
+
+        public bool SeekBehaviour
+        {
+            get
+            {
+                return isOn(behaviour_type.seek);
+            }
+            set
+            {
+                if (value)
+                {
+                    turnOn(behaviour_type.seek);
+                }
+                else
+                {
+                    turnOff(behaviour_type.seek);
+                }
+            }
         }
         #endregion
 
@@ -345,12 +369,12 @@ namespace BGE
             SteeringBehaviours.checkNaN(force);
             Vector3 newAcceleration = force / mass;
 
-            if (SteeringManager.Instance().showVectors)
+            if (Params.drawVectors)
             {
                 LineDrawer.DrawVectors(transform);
             }
 
-            timeDelta = Time.deltaTime * Params.GetFloat(Params.TIME_MODIFIER_KEY);
+            timeDelta = Time.deltaTime + Params.timeModifier;
 
             if (timeDelta > 0.0f)
             {
@@ -418,7 +442,10 @@ namespace BGE
             desiredVelocity = targetPos - transform.position;
             desiredVelocity.Normalize();
             desiredVelocity *= Params.GetFloat("max_speed");
-
+            if (Params.drawDebugLines)
+            {
+                LineDrawer.DrawTarget(targetPos, Color.red);
+            }
             return (desiredVelocity - velocity);
         }
 
@@ -486,7 +513,7 @@ namespace BGE
                         Sphere tempSphere = new Sphere(expandedRadius, localPos);
 
                         // Create a ray
-                        Ray ray = new Ray();
+                        BGE.Geom.Ray ray = new BGE.Geom.Ray();
                         ray.pos = new Vector3(0, 0, 0);
                         ray.look = Vector3.forward;
 
@@ -528,7 +555,7 @@ namespace BGE
                         force.y = -force.y;
                     }
 
-                    if (SteeringManager.Instance().showFeelers)
+                    if (Params.drawDebugLines)
                     {
                         LineDrawer.DrawLine(transform.position, transform.position + transform.forward * boxLength, debugLineColour);                    
                     }
@@ -551,9 +578,8 @@ namespace BGE
         Vector3 OffsetPursuit(Vector3 offset)
         {
             Vector3 target = Vector3.zero;
-
             target = leader.transform.TransformPoint(offset);
-
+         
             float dist = (target - transform.position).magnitude;
 
             float lookAhead = (dist / Params.GetFloat("max_speed"));
@@ -571,10 +597,12 @@ namespace BGE
             float time = dist / Params.GetFloat("max_speed");
 
             Vector3 targetPos = leader.transform.position + (time * leader.GetComponent<SteeringBehaviours>().velocity);
-            if (SteeringManager.Instance().showFeelers)
+            if (Params.drawDebugLines)
             {
-                LineDrawer.DrawLine(transform.position, targetPos, debugLineColour);            
+                LineDrawer.DrawLine(transform.position, targetPos, debugLineColour);
+                LineDrawer.DrawTarget(targetPos, Color.yellow);
             }
+
             return Seek(targetPos);
         }
 
@@ -644,7 +672,7 @@ namespace BGE
 
         public void DrawFeelers()
         {
-            if (SteeringManager.Instance().showFeelers)
+            if (Params.drawDebugLines)
             {
                 foreach (Vector3 feeler in Feelers)
                 {
@@ -668,7 +696,10 @@ namespace BGE
 
             float clamped = Math.Min(ramped, Params.GetFloat("max_speed"));
             Vector3 desired = clamped * (toTarget / distance);
-
+            if (Params.drawDebugLines)
+            {
+                LineDrawer.DrawTarget(target, Color.gray);
+            }
             checkNaN(desired);
 
 

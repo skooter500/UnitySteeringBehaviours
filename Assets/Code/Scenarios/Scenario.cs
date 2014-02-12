@@ -55,13 +55,14 @@ namespace BGE.Scenarios
             o.transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             o.transform.position = position;
             return o;
+
         }
 
         public GameObject CreateBoid(Vector3 position, GameObject prefab)
         {
             GameObject boid;
 
-            boid = (GameObject)SteeringManager.Instantiate(prefab);
+            boid = (GameObject)GameObject.Instantiate(prefab);
             boid.tag = "boid";
             boid.AddComponent<SteeringBehaviours>();
             boid.transform.position = position;

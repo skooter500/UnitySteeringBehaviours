@@ -71,7 +71,6 @@ namespace BGE
             {
                 gameObject.transform.forward = Vector3.Normalize(velocity);
             }
-
             velocity *= 0.99f;
         }
     }
