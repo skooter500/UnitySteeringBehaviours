@@ -8,7 +8,8 @@ namespace BGE
 {
     public class PathFinder
     {
-
+        float dist = 5.0f;
+            
         public PathFinder()
         {
             obstacles = GameObject.FindGameObjectsWithTag("obstacle");
@@ -16,26 +17,20 @@ namespace BGE
             {
                 float radius = o.renderer.bounds.extents.magnitude;
                 radii.Add(radius);
-            }
+            }           
         }
 
-        bool isThreeD;
+        public bool isThreeD = false;
 
-        public bool IsThreeD
-        {
-            get { return isThreeD; }
-            set { isThreeD = value; }
-        }
 
-        Dictionary<Vector3, Node> open = new Dictionary<Vector3, Node>();
+        Dictionary<Vector3, Node> open = new Dictionary<Vector3, Node>(20000);
         //PriorityQueue<Node> openPQ = new PriorityQueue<Node>();
         //List<Node> openList = new List<Node>();
 
-        Dictionary<Vector3, Node> closed = new Dictionary<Vector3, Node>();
+        Dictionary<Vector3, Node> closed = new Dictionary<Vector3, Node>(20000);
         GameObject[] obstacles;
         List<float> radii = new List<float>();
         
-
         Vector3 start, end;
 
         bool smooth = false;
@@ -46,12 +41,21 @@ namespace BGE
             set { smooth = value; }
         }
 
+        Vector3 RoundToNodeDist(Vector3 v)
+        {
+            Vector3 ret = new Vector3();
+            ret.x = ((int)(v.x / dist)) * dist;
+            ret.y = ((int)(v.y / dist)) * dist;
+            ret.z = ((int)(v.z / dist)) * dist;
+            return ret;
+        }
+
         public Path FindPath(Vector3 start, Vector3 end)
         {
             long oldNow = DateTime.Now.Ticks;
             bool found = false;
-            this.end.x = (float)Math.Round(start.x); this.end.y = (float)Math.Round(start.y); this.end.z = (float)Math.Round(start.z);
-            this.start.x = (float)Math.Round(end.x); this.start.y = (float)Math.Round(end.y); this.start.z = (float)Math.Round(end.z);
+            this.end = RoundToNodeDist(start);
+            this.start = RoundToNodeDist(end);
 
             open.Clear();
             closed.Clear();
@@ -64,12 +68,17 @@ namespace BGE
             //openPQ.Enqueue(first);
 
             Node current = first;
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            int maxSize = 0;
             while (open.Count > 0)
             {
+                if (open.Count > maxSize)
+                {
+                    maxSize = open.Count;
+                }
                 //current = openPQ.Dequeue();
                 //float min = current.f;
                 
-
                 // Get the top of the q
                 float min = float.MaxValue;
                 foreach (Node node in open.Values)
@@ -102,7 +111,7 @@ namespace BGE
                 path.Waypoints.Add(current.pos);
             }
             long elapsed = DateTime.Now.Ticks - oldNow;
-            Debug.Log("A * took: " + (elapsed / 10000) + " milliseconds");
+            Debug.Log("A * took: " + (elapsed / 10000) + " milliseconds. Open List: " + maxSize);
             if (smooth)
             {
                 SmoothPath(path);
@@ -116,148 +125,150 @@ namespace BGE
             Vector3 pos;
             pos.x = current.pos.x;
             pos.y = current.pos.y;
-            pos.z = current.pos.z + 1;
+            pos.z = current.pos.z + dist;
             AddIfValid(pos, current);
 
             // Forwards right
-            pos.x = current.pos.x + 1;
+            pos.x = current.pos.x + dist;
             pos.y = current.pos.y;
-            pos.z = current.pos.z + 1;
+            pos.z = current.pos.z + dist;
             AddIfValid(pos, current);
 
             // Right
-            pos.x = current.pos.x + 1;
+            pos.x = current.pos.x + dist;
             pos.y = current.pos.y;
             pos.z = current.pos.z;
             AddIfValid(pos, current);
 
             // Backwards Right
-            pos.x = current.pos.x + 1;
+            pos.x = current.pos.x + dist;
             pos.y = current.pos.y;
-            pos.z = current.pos.z - 1;
+            pos.z = current.pos.z - dist;
             AddIfValid(pos, current);
 
             // Backwards
             pos.x = current.pos.x;
             pos.y = current.pos.y;
-            pos.z = current.pos.z - 1;
+            pos.z = current.pos.z - dist;
             AddIfValid(pos, current);
 
             // Backwards Left
-            pos.x = current.pos.x - 1;
+            pos.x = current.pos.x - dist;
             pos.y = current.pos.y;
-            pos.z = current.pos.z - 1;
+            pos.z = current.pos.z - dist;
             AddIfValid(pos, current);
 
             // Left
-            pos.x = current.pos.x - 1;
+            pos.x = current.pos.x - dist;
             pos.y = current.pos.y;
             pos.z = current.pos.z;
             AddIfValid(pos, current);
 
             // Forwards Left
-            pos.x = current.pos.x - 1;
+            pos.x = current.pos.x - dist;
             pos.y = current.pos.y;
-            pos.z = current.pos.z + 1;
+            pos.z = current.pos.z + dist;
             AddIfValid(pos, current);
 
             if (isThreeD)
             {
                 // Above in front row
-                pos.x = current.pos.x - 1;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z - 1;
+                pos.x = current.pos.x - dist;
+                pos.y = current.pos.y + dist;
+                pos.z = current.pos.z - dist;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z - 1;
+                pos.y = current.pos.y + dist;
+                pos.z = current.pos.z - dist;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + 1;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z - 1;
+                pos.x = current.pos.x + dist;
+                pos.y = current.pos.y + dist;
+                pos.z = current.pos.z - dist;
                 AddIfValid(pos, current);
 
+                
                 // Above middle row
-                pos.x = current.pos.x - 1;
-                pos.y = current.pos.y + 1;
+                pos.x = current.pos.x - dist;
+                pos.y = current.pos.y + dist;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y + 1;
+                pos.y = current.pos.y + dist;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + 1;
-                pos.y = current.pos.y + 1;
+                pos.x = current.pos.x + dist;
+                pos.y = current.pos.y + dist;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 // Above back row
-                pos.x = current.pos.x - 1;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z + 1;
+                pos.x = current.pos.x - dist;
+                pos.y = current.pos.y + dist;
+                pos.z = current.pos.z + dist;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z + 1;
+                pos.y = current.pos.y + dist;
+                pos.z = current.pos.z + dist;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + 1;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z + 1;
+                pos.x = current.pos.x + dist;
+                pos.y = current.pos.y + dist;
+                pos.z = current.pos.z + dist;
                 AddIfValid(pos, current);
 
-                // Above in front row
-                pos.x = current.pos.x - 1;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z - 1;
+                // Below in front row
+                pos.x = current.pos.x - dist;
+                pos.y = current.pos.y - dist;
+                pos.z = current.pos.z - dist;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z - 1;
+                pos.y = current.pos.y - dist;
+                pos.z = current.pos.z - dist;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + 1;
-                pos.y = current.pos.y + 1;
-                pos.z = current.pos.z - 1;
+                pos.x = current.pos.x + dist;
+                pos.y = current.pos.y - dist;
+                pos.z = current.pos.z - dist;
                 AddIfValid(pos, current);
 
                 // Below middle row
-                pos.x = current.pos.x - 1;
-                pos.y = current.pos.y - 1;
+                pos.x = current.pos.x - dist;
+                pos.y = current.pos.y - dist;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y - 1;
+                pos.y = current.pos.y - dist;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + 1;
-                pos.y = current.pos.y - 1;
+                pos.x = current.pos.x + dist;
+                pos.y = current.pos.y - dist;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 // Below back row
-                pos.x = current.pos.x - 1;
-                pos.y = current.pos.y - 1;
-                pos.z = current.pos.z + 1;
+                pos.x = current.pos.x - dist;
+                pos.y = current.pos.y - dist;
+                pos.z = current.pos.z + dist;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y - 1;
-                pos.z = current.pos.z + 1;
+                pos.y = current.pos.y - dist;
+                pos.z = current.pos.z + dist;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + 1;
-                pos.y = current.pos.y - 1;
-                pos.z = current.pos.z + 1;
+                pos.x = current.pos.x + dist;
+                pos.y = current.pos.y - dist;
+                pos.z = current.pos.z + dist;
                 AddIfValid(pos, current);
+                 
             }
 
         }
@@ -352,12 +363,12 @@ namespace BGE
 
         private float heuristic(Vector3 v1, Vector3 v2)
         {
-            return 10.0f * (Math.Abs(v2.x - v1.x) + Math.Abs(v2.z - v1.z));
+            return 10.0f * (Math.Abs(v2.x - v1.x) + Math.Abs(v2.y - v1.y) + Math.Abs(v2.z - v1.z));
         }
 
         private float cost(Vector3 v1, Vector3 v2)
         {
-            int dist = (int)Math.Abs(v2.x - v1.x) + (int)Math.Abs(v2.z - v1.z);
+            int dist = (int)Math.Abs(v2.x - v1.x) + (int)Math.Abs(v2.y - v1.y) + (int)Math.Abs(v2.z - v1.z);
             return (dist == 1) ? 10 : 14;
         }
 

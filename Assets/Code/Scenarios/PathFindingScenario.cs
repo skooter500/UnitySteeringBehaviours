@@ -24,7 +24,7 @@ namespace BGE.Scenarios
         {
             Params.Load("default.txt");
 
-            targetPos = new Vector3(20, 0, 150);
+            targetPos = new Vector3(20, 0, 250);
             startPos = new Vector3(10, 0, -20);
 
             leader = CreateBoid(startPos, boidPrefab);
@@ -59,7 +59,7 @@ namespace BGE.Scenarios
 
             if (Input.GetKeyDown(KeyCode.O) && !lastPressed)
             {
-                pathFinder.IsThreeD = !pathFinder.IsThreeD;
+                pathFinder.isThreeD = !pathFinder.isThreeD;
                 recalculate = true;
             }
 
