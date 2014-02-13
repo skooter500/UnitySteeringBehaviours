@@ -25,10 +25,11 @@ namespace BGE.Scenarios
             leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.sphere_constrain);
 
             // Create the boids
+            GameObject boid = null;
             for (int i = 0; i < Params.GetFloat("num_boids"); i++)
             {
                 Vector3 pos = Utilities.RandomPosition(range);
-                GameObject boid = CreateBoid(pos, boidPrefab);
+                boid = CreateBoid(pos, boidPrefab);
                 boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.separation);
                 boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.cohesion);
                 boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.alignment);
@@ -51,7 +52,7 @@ namespace BGE.Scenarios
 
             GroundEnabled(false);
 
-            CreateCamFollower(leader, new Vector3(0, 0, -10));
+            CreateCamFollower(boid, new Vector3(0, 0, -10));
         }
     }
 }

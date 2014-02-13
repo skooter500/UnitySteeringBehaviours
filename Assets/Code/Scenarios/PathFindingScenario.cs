@@ -41,6 +41,8 @@ namespace BGE.Scenarios
             leader.GetComponent<SteeringBehaviours>().path = path;
             leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.follow_path);
 
+            CreateCamFollower(leader, new Vector3(0, 5, -10));
+
             GroundEnabled(false);
         }
 

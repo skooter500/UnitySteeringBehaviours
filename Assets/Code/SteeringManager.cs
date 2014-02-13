@@ -113,6 +113,12 @@ namespace BGE
                     Params.drawDebugLines = !Params.drawDebugLines;
                 }
 
+                if (Event.current.keyCode == KeyCode.F7)
+                {
+                    GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
+                    camera.transform.up = Vector3.up;
+                }
+
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
                     Application.Quit();
@@ -144,6 +150,7 @@ namespace BGE
             PrintMessage("Press F4 to toggle messages");
             PrintMessage("Press F5 to toggle vector drawing");
             PrintMessage("Press F6 to toggle debug drawing");
+            PrintMessage("Press F7 to level camera");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());

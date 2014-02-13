@@ -30,6 +30,7 @@ namespace BGE
         public Vector3 offset;
         private Vector3 randomWalkTarget;
         public Path path = new Path();
+        public float maxSpeed;
 
         Color debugLineColour = Color.cyan;
 
@@ -103,56 +104,7 @@ namespace BGE
         #endregion
 
         #region Utilities
-        static System.Random random = new System.Random(DateTime.Now.Millisecond);
-
-        public static float RandomClamped()
-        {
-            return 1.0f - ((float)random.NextDouble() * 2.0f);
-        }
-
-        static public bool checkNaN(ref Vector3 v, Vector3 def)
-        {
-            if (float.IsNaN(v.x))
-            {
-                Debug.LogError("Nan");
-                v = def;
-                return true;
-            }
-            if (float.IsNaN(v.y))
-            {
-                Debug.LogError("Nan");
-                v = def;
-                return true;
-            }
-            if (float.IsNaN(v.z))
-            {
-                Debug.LogError("Nan");
-                v = def;
-                return true;
-            }
-            return false;
-        }
-
-        static public bool checkNaN(Vector3 v)
-        {
-            if (float.IsNaN(v.x))
-            {
-                System.Console.WriteLine("Nan");
-                return true;
-            }
-            if (float.IsNaN(v.y))
-            {
-                System.Console.WriteLine("Nan");
-                return true;
-            }
-            if (float.IsNaN(v.z))
-            {
-                System.Console.WriteLine("Nan");
-                return true;
-            }
-            return false;
-        }
-
+        
         private void makeFeelers()
         {
             Feelers.Clear();
@@ -235,7 +187,7 @@ namespace BGE
             }
 
 
-            checkNaN(force);
+            Utilities.checkNaN(force);
             if (isOn(behaviour_type.wall_avoidance))
             {
                 force = WallAvoidance() * Params.GetWeight("wall_avoidance_weight");
@@ -366,7 +318,7 @@ namespace BGE
         {
             float smoothRate;
             force = Calculate();
-            SteeringBehaviours.checkNaN(force);
+            Utilities.checkNaN(force);
             Vector3 newAcceleration = force / mass;
 
             if (Params.drawVectors)
@@ -385,10 +337,10 @@ namespace BGE
             velocity += acceleration * timeDelta;
 
             float speed = velocity.magnitude;
-            if (speed > Params.GetFloat("max_speed"))
+            if (speed > maxSpeed)
             {
                 velocity.Normalize();
-                velocity *= Params.GetFloat("max_speed");
+                velocity *= maxSpeed;
             }
             transform.position += velocity * timeDelta;
 
@@ -441,7 +393,7 @@ namespace BGE
 
             desiredVelocity = targetPos - transform.position;
             desiredVelocity.Normalize();
-            desiredVelocity *= Params.GetFloat("max_speed");
+            desiredVelocity *= maxSpeed;
             if (Params.drawDebugLines)
             {
                 LineDrawer.DrawTarget(targetPos, Color.red);
@@ -452,7 +404,7 @@ namespace BGE
         Vector3 Evade()
         {
             float dist = (target.transform.position - transform.position).magnitude;
-            float lookAhead = (dist / Params.GetFloat("max_speed"));
+            float lookAhead = maxSpeed;
 
             Vector3 targetPos = target.transform.position + (lookAhead * target.GetComponent<SteeringBehaviours>().velocity);
             return Flee(targetPos);
@@ -464,7 +416,7 @@ namespace BGE
             makeFeelers();
             List<GameObject> tagged = new List<GameObject>();
             float minBoxLength = 20.0f;
-            float boxLength = minBoxLength + ((velocity.magnitude / Params.GetFloat("max_speed")) * minBoxLength * 2.0f);
+            float boxLength = minBoxLength + ((velocity.magnitude / maxSpeed) * minBoxLength * 2.0f);
 
             if (float.IsNaN(boxLength))
             {
@@ -582,11 +534,11 @@ namespace BGE
          
             float dist = (target - transform.position).magnitude;
 
-            float lookAhead = (dist / Params.GetFloat("max_speed"));
+            float lookAhead = (dist / maxSpeed);
 
             target = target + (lookAhead * leader.GetComponent<SteeringBehaviours>().velocity);
 
-            checkNaN(target);
+            Utilities.checkNaN(target);
             return Arrive(target);
         }
 
@@ -594,13 +546,12 @@ namespace BGE
         {
             Vector3 toTarget = leader.transform.position - transform.position;
             float dist = toTarget.magnitude;
-            float time = dist / Params.GetFloat("max_speed");
+            float time = dist / maxSpeed;
 
             Vector3 targetPos = leader.transform.position + (time * leader.GetComponent<SteeringBehaviours>().velocity);
             if (Params.drawDebugLines)
             {
                 LineDrawer.DrawLine(transform.position, targetPos, debugLineColour);
-                LineDrawer.DrawTarget(targetPos, Color.yellow);
             }
 
             return Seek(targetPos);
@@ -616,7 +567,7 @@ namespace BGE
                 return Vector3.zero;
             }
             desiredVelocity.Normalize();
-            desiredVelocity *= Params.GetFloat("max_speed");
+            desiredVelocity *= maxSpeed;
             return (desiredVelocity - velocity);
         }
 
@@ -625,9 +576,9 @@ namespace BGE
             float dist = (transform.position - randomWalkTarget).magnitude;
             if (dist < 50)
             {
-                randomWalkTarget.x = RandomClamped() * Params.GetFloat("world_range");
-                randomWalkTarget.y = RandomClamped() * Params.GetFloat("world_range");
-                randomWalkTarget.z = RandomClamped() * Params.GetFloat("world_range");
+                randomWalkTarget.x = Utilities.RandomClamped() * Params.GetFloat("world_range");
+                randomWalkTarget.y = Utilities.RandomClamped(0, Params.GetFloat("world_range") / 2.0f);
+                randomWalkTarget.z = Utilities.RandomClamped() * Params.GetFloat("world_range");
             }
             return Seek(randomWalkTarget);
         }
@@ -638,7 +589,7 @@ namespace BGE
         {
             float jitterTimeSlice = Params.GetFloat("wander_jitter") * timeDelta;
 
-            Vector3 toAdd = new Vector3(RandomClamped(), RandomClamped(), RandomClamped()) * jitterTimeSlice;
+            Vector3 toAdd = new Vector3(Utilities.RandomClamped(), Utilities.RandomClamped(), Utilities.RandomClamped()) * jitterTimeSlice;
             wanderTargetPos += toAdd;
             wanderTargetPos.Normalize();
             wanderTargetPos *= Params.GetFloat("wander_radius");
@@ -692,15 +643,15 @@ namespace BGE
                 return Vector3.zero;
             }
             const float DecelerationTweaker = 10.3f;
-            float ramped = Params.GetFloat("max_speed") * (distance / (slowingDistance * DecelerationTweaker));
+            float ramped = maxSpeed * (distance / (slowingDistance * DecelerationTweaker));
 
-            float clamped = Math.Min(ramped, Params.GetFloat("max_speed"));
+            float clamped = Math.Min(ramped, maxSpeed);
             Vector3 desired = clamped * (toTarget / distance);
             if (Params.drawDebugLines)
             {
                 LineDrawer.DrawTarget(target, Color.gray);
             }
-            checkNaN(desired);
+            Utilities.checkNaN(desired);
 
 
             return desired - velocity;
@@ -798,7 +749,7 @@ namespace BGE
                     steeringForce = Vector3.Normalize(Seek(centreOfMass));
                 }
             }
-            checkNaN(steeringForce);
+            Utilities.checkNaN(steeringForce);
             return steeringForce;
         }
 
@@ -837,6 +788,7 @@ namespace BGE
             velocity = Vector3.zero;
             mass = 1.0f;
             flags = 0;
+            maxSpeed = Params.GetFloat("max_speed");
             calculationMethod = CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation;
             target = null;
             leader = null;

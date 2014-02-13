@@ -15,8 +15,8 @@ namespace BGE.Scenarios
         public override void Start()
         {
             Params.Load("default.txt");
-            leader = CreateBoid(new Vector3(10, 5, 10), leaderPrefab);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.seek);
+            leader = CreateBoid(new Vector3(10, 5, 60), leaderPrefab);
+            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.random_walk);
             leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(100, 5, 100);
 
             GameObject boid = CreateBoid(new Vector3(25, 5, 50), boidPrefab);

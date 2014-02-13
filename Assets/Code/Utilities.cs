@@ -143,5 +143,58 @@ namespace BGE
         {
             smoothedAccumulator = Interpolate(Clip(smoothRate, 0, 1), smoothedAccumulator, newValue);
         }
+
+        public static float RandomClamped()
+        {
+            return 1.0f - ((float)RNG.NextDouble() * 2.0f);
+        }
+
+        public static float RandomClamped(float lower, float upper)
+        {
+            return lower + ((float)RNG.NextDouble() * (upper - lower));
+        }
+
+        static public bool checkNaN(ref Vector3 v, Vector3 def)
+        {
+            if (float.IsNaN(v.x))
+            {
+                Debug.LogError("Nan");
+                v = def;
+                return true;
+            }
+            if (float.IsNaN(v.y))
+            {
+                Debug.LogError("Nan");
+                v = def;
+                return true;
+            }
+            if (float.IsNaN(v.z))
+            {
+                Debug.LogError("Nan");
+                v = def;
+                return true;
+            }
+            return false;
+        }
+
+        static public bool checkNaN(Vector3 v)
+        {
+            if (float.IsNaN(v.x))
+            {
+                System.Console.WriteLine("Nan");
+                return true;
+            }
+            if (float.IsNaN(v.y))
+            {
+                System.Console.WriteLine("Nan");
+                return true;
+            }
+            if (float.IsNaN(v.z))
+            {
+                System.Console.WriteLine("Nan");
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace BGE.Scenarios
             leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
             leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
             leader.GetComponent<SteeringBehaviours>().seekTargetPos = aiPos + new Vector3(0, 0, 200);
+            leader.GetComponent<SteeringBehaviours>().maxSpeed = 250;
 
             GameObject aiBoid = CreateBoid(aiPos, boidPrefab);
             aiBoid.AddComponent<StateMachine>();

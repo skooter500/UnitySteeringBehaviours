@@ -8,7 +8,7 @@ namespace BGE
     public class FPSController : MonoBehaviour
     {
 
-        float speed = 5.0f;
+        float speed = 10.0f;
         float mouseX, mouseY;
         // Use this for initialization
         void Start()
@@ -20,6 +20,12 @@ namespace BGE
         void Yaw(float angle)
         {
             Quaternion rot = Quaternion.AngleAxis(angle, Vector3.up);
+            transform.rotation = rot * transform.rotation;
+        }
+
+        void Roll(float angle)
+        {
+            Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
             transform.rotation = rot * transform.rotation;
         }
 
@@ -66,6 +72,14 @@ namespace BGE
             if (Input.GetKey(KeyCode.D))
             {
                 transform.position += gameObject.transform.right * Time.deltaTime * speed;
+            }
+            if (Input.GetKey(KeyCode.Q))
+            {
+                Roll(- Time.deltaTime * speed);
+            }
+            if (Input.GetKey(KeyCode.E))
+            {
+                Roll(Time.deltaTime * speed);
             }
 
             SteeringManager.PrintVector("Cam pos: ", transform.position);
