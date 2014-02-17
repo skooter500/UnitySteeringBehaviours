@@ -16,9 +16,24 @@ namespace BGE
         public static bool drawDebugLines = false;
         public static float timeModifier;
 
+        private static void PrintException(string key, Exception e)
+        {
+            Console.WriteLine("Could not find property: " + key);
+            Console.WriteLine("Did you remember to call Params.Load?");
+            Console.WriteLine(e.StackTrace);
+        }
+
         public static float GetFloat(string key)
         {
-            return float.Parse("" + dictionary[key]);
+            try
+            {
+                return float.Parse("" + dictionary[key]);
+            }
+            catch (Exception e)
+            {
+                PrintException(key, e);                
+            }
+            return -1;
         }
 
         public static void Put(string key, object value)
@@ -28,12 +43,28 @@ namespace BGE
 
         public static float GetWeight(string key)
         {
-            return float.Parse("" + dictionary[key]) * GetFloat("steering_weight_tweaker");
+            try
+            {
+                return float.Parse("" + dictionary[key]) * GetFloat("steering_weight_tweaker");
+            }
+            catch (Exception e)
+            {
+                PrintException(key, e);
+            }
+            return -1;
         }
 
         public static object Get(string key)
         {
-            return dictionary[key];
+            try
+            {
+                return dictionary[key];
+            }
+            catch (Exception e)
+            {
+                PrintException(key, e);
+            }
+            return null;           
         }
 
         public static void Load(string filename)

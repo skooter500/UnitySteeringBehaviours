@@ -39,7 +39,6 @@ namespace BGE
         #region Flags
         public enum behaviour_type
         {
-
             none = 0x00000,
             seek = 0x00002,
             flee = 0x00004,
@@ -82,29 +81,9 @@ namespace BGE
         {
             flags = (int)SteeringBehaviours.behaviour_type.none;
         }
+#endregion
 
-        public bool SeekBehaviour
-        {
-            get
-            {
-                return isOn(behaviour_type.seek);
-            }
-            set
-            {
-                if (value)
-                {
-                    turnOn(behaviour_type.seek);
-                }
-                else
-                {
-                    turnOff(behaviour_type.seek);
-                }
-            }
-        }
-        #endregion
-
-        #region Utilities
-        
+#region Utilities        
         private void makeFeelers()
         {
             Feelers.Clear();
@@ -134,8 +113,8 @@ namespace BGE
             newFeeler = transform.TransformPoint(newFeeler);
             Feelers.Add(newFeeler);
         }
-        #endregion
-        #region Integration
+#endregion
+#region Integration
 
         private bool accumulateForce(ref Vector3 runningTotal, Vector3 force)
         {
