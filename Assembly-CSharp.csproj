@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\FPSController.cs" />
+     <Compile Include="Assets\ForceController.cs" />
      <Compile Include="Assets\GameManager.cs" />
      <Compile Include="Assets\MoveSTuff.cs" />
      <Compile Include="Assets\Perception.cs" />

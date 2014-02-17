@@ -1,0 +1,18 @@
+Initialize engine version: 4.3.4f1 (e444f76e01cd)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 9.0c [igdumdim32.dll 10.18.10.3379]
+    Renderer: Intel(R) HD Graphics 4000
+    Vendor:   Intel
+    VRAM:     912 MB (via DXGI)
+    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=1 INTZ=1 RAWZ=0 NULL=1 RESZ=1 SlowINTZ=0
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Bryan\Documents\Projects\UnitySteeringBehaviours\Build\Steering_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Bryan\Documents\Projects\UnitySteeringBehaviours\Build\Steering_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Bryan\Documents\Projects\UnitySteeringBehaviours\Build\Steering_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Bryan\Documents\Projects\UnitySteeringBehaviours\Build\Steering_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+- Completed reload, in  0.049 seconds
+desktop: 1024x768 60Hz; virtual: 1024x768 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+Platform assembly: C:\Users\Bryan\Documents\Projects\UnitySteeringBehaviours\Build\Steering_Data\Managed\System.Core.dll (this message is harmless)
