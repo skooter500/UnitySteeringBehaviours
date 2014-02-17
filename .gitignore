@@ -13,6 +13,7 @@ ExportedObj/
 *.svd
 *.userprefs
 *.pidb
+*.pdb
 *.suo
 *.user
 *.unityproj
