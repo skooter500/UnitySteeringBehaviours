@@ -70,7 +70,7 @@ namespace BGE.Scenarios
             if (Input.GetMouseButton(0))
             {
                 Plane worldPlane = new Plane(new Vector3(0, 1, 0), 0);
-                Ray ray = new Ray(camera.transform.position, camera.transform.forward);
+                UnityEngine.Ray ray = new UnityEngine.Ray(camera.transform.position, camera.transform.forward);
                 float distance = 0;
                 if (worldPlane.Raycast(ray, out distance))
                 {

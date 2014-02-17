@@ -16,7 +16,7 @@ namespace BGE.Geom
             this.radius = radius;
             this.Position = position;
         }
-        public bool closestRayIntersects(Ray ray, Vector3 point, ref Vector3 intersection)
+        public bool closestRayIntersects(BGE.Geom.Ray ray, Vector3 point, ref Vector3 intersection)
         {
             // Calculate p0-c call it v
 

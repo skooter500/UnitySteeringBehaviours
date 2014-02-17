@@ -36,6 +36,7 @@ namespace BGE.Scenarios
                 boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wander);
                 boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.sphere_constrain);
                 boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+            
             }
 
             // Create some obstacles..
