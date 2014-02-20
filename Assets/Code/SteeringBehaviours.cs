@@ -602,9 +602,8 @@ namespace BGE
         {
             makeFeelers();
 
-            Plane worldPlane = new Plane(new Vector3(0, 1, 0), 0);
+            Plane worldPlane = new Plane(new Vector3(0, 1, 0), 0);           
             Vector3 force = Vector3.zero;
-
             foreach (Vector3 feeler in Feelers)
             {
                 if (!worldPlane.GetSide(feeler))

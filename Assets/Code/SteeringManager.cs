@@ -33,6 +33,13 @@ namespace BGE
 
         void Start()
         {
+
+            Vector3[] points = new Vector3[3];
+            points[0] = new Vector3(1, 1, 1);
+            points[1] = new Vector3(1, 2, 0);
+            points[2] = new Vector3(-1, 2, 1);
+            Plane p = new Plane(points[0], points[1], points[2]);
+
             instance = this;
             Screen.showCursor = false;
 
