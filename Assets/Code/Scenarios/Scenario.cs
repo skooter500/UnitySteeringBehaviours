@@ -78,9 +78,9 @@ namespace BGE.Scenarios
             camFollower.GetComponent<SteeringBehaviours>().leader = leader;
             camFollower.GetComponent<SteeringBehaviours>().offset = offset;
             camFollower.transform.position = leader.transform.TransformPoint(offset);
-            camFollower.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
-            //camFighter.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
-            camFollower.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+            camFollower.GetComponent<SteeringBehaviours>().OffsetPursuitEnabled = true;
+            //camFighter.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
+            camFollower.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
             SteeringManager.Instance().camFighter = camFollower;
             GameObject.FindGameObjectWithTag("MainCamera").transform.position = camFollower.transform.position;
 

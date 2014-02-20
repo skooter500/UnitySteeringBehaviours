@@ -20,9 +20,9 @@ namespace BGE.Scenarios
 
             // Create the avoidance boid
             leader = CreateBoid(Utilities.RandomPosition(range), leaderPrefab);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wander);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.sphere_constrain);
+            leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
+            leader.GetComponent<SteeringBehaviours>().WanderEnabled = true;
+            leader.GetComponent<SteeringBehaviours>().SphereConstrainEnabled = true;
 
             // Create the boids
             GameObject boid = null;
@@ -30,12 +30,12 @@ namespace BGE.Scenarios
             {
                 Vector3 pos = Utilities.RandomPosition(range);
                 boid = CreateBoid(pos, boidPrefab);
-                boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.separation);
-                boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.cohesion);
-                boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.alignment);
-                boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wander);
-                boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.sphere_constrain);
-                boid.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+                boid.GetComponent<SteeringBehaviours>().SeparationEnabled = true;
+                boid.GetComponent<SteeringBehaviours>().CohesionEnabled = true;
+                boid.GetComponent<SteeringBehaviours>().AlignmentEnabled = true;
+                boid.GetComponent<SteeringBehaviours>().WanderEnabled = true;
+                boid.GetComponent<SteeringBehaviours>().SphereConstrainEnabled = true;
+                boid.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
             }
 
             // Create some obstacles..

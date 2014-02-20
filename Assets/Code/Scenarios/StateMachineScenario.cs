@@ -20,9 +20,9 @@ namespace BGE.Scenarios
             Vector3 aiPos = new Vector3(-20, 50, 50);
 
             leader = CreateBoid(new Vector3(10, 50, 0), leaderPrefab);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.arrive);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+            leader.GetComponent<SteeringBehaviours>().ArriveEnabled = true;
+            leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
+            leader.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
             leader.GetComponent<SteeringBehaviours>().seekTargetPos = aiPos + new Vector3(0, 0, 200);
             leader.GetComponent<SteeringBehaviours>().maxSpeed = 250;
 
