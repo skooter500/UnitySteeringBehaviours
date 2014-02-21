@@ -12,7 +12,7 @@ namespace BGE
         public Vector3 velocity;
         public Vector3 acceleration;
 
-        public float myRadius;
+        public float defaultRadius = 5.0f;
 
         public float mass;
 
@@ -189,6 +189,15 @@ namespace BGE
                 }
             }
 
+            if (FleeEnabled)
+            {
+                force = Flee(leader.transform.position) * Params.GetWeight("flee_weight");
+                if (!accumulateForce(ref steeringForce, force))
+                {
+                    return steeringForce;
+                }
+            }
+
             int tagged = 0;
             if (SeparationEnabled || CohesionEnabled || AlignmentEnabled)
             {
@@ -294,7 +303,6 @@ namespace BGE
             force = Calculate();
             Utilities.checkNaN(force);
             Vector3 newAcceleration = force / mass;
-
             if (Params.drawVectors)
             {
                 LineDrawer.DrawVectors(transform);
@@ -431,7 +439,7 @@ namespace BGE
                     // is a potential intersection.
 
                     float obstacleRadius = o.transform.localScale.x / 2;
-                    float expandedRadius = myRadius + obstacleRadius;
+                    float expandedRadius = GetRadius() + obstacleRadius;
                     if ((Math.Abs(localPos.y) < expandedRadius) && (Math.Abs(localPos.x) < expandedRadius))
                     {
                         // Now to do a ray/sphere intersection test. The center of the				
@@ -467,7 +475,7 @@ namespace BGE
 
                     //calculate the lateral force
                     float obstacleRadius = closestIntersectingObstacle.GetComponent<Renderer>().bounds.extents.magnitude;
-                    float expandedRadius = myRadius + obstacleRadius;
+                    float expandedRadius = GetRadius() + obstacleRadius;
                     force.x = (expandedRadius - Math.Abs(localPosOfClosestObstacle.x)) * multiplier;
                     force.y = (expandedRadius - -Math.Abs(localPosOfClosestObstacle.y)) * multiplier;
 
@@ -753,7 +761,20 @@ namespace BGE
         // Use this for initialization
         void Start()
         {
-            myRadius = 5.0f;
+            maxSpeed = Params.GetFloat("max_speed");            
+        }
+
+        private float GetRadius()
+        {
+            Renderer r = GetComponent<Renderer>();
+            if (r == null)
+            {
+                return defaultRadius;
+            }
+            else
+            {
+                return r.bounds.extents.magnitude;
+            }
         }
 
         public SteeringBehaviours()
@@ -762,7 +783,6 @@ namespace BGE
             velocity = Vector3.zero;
             mass = 1.0f;
             turnOffAll();
-            maxSpeed = Params.GetFloat("max_speed");
             calculationMethod = CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation;
             target = null;
             leader = null;
