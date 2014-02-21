@@ -164,7 +164,7 @@ namespace BGE
             Utilities.checkNaN(force);
             if (PlaneAvoidanceEnabled)
             {
-                force = WallAvoidance() * Params.GetWeight("wall_avoidance_weight");
+                force = PlaneAvoidance() * Params.GetWeight("plane_avoidance_weight");
                 if (!accumulateForce(ref steeringForce, force))
                 {
                     return steeringForce;
@@ -580,7 +580,7 @@ namespace BGE
             return (worldTarget - transform.position);
         }
 
-        public Vector3 WallAvoidance()
+        public Vector3 PlaneAvoidance()
         {
             makeFeelers();
 
