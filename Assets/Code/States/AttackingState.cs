@@ -21,8 +21,8 @@ namespace BGE.States
         public override void Enter()
         {
             entity.GetComponent<SteeringBehaviours>().turnOffAll();
-            entity.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
-            entity.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+            entity.GetComponent<SteeringBehaviours>().OffsetPursuitEnabled = true;
+            entity.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
             entity.GetComponent<SteeringBehaviours>().offset = new Vector3(0, 0, 5);
             entity.GetComponent<SteeringBehaviours>().leader = SteeringManager.Instance().currentScenario.leader;
         }

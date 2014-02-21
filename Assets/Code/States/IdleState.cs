@@ -31,8 +31,8 @@ namespace BGE.States
             entity.GetComponent<SteeringBehaviours>().path.Looped = true;            
             entity.GetComponent<SteeringBehaviours>().path.draw = true;
             entity.GetComponent<SteeringBehaviours>().turnOffAll();
-            entity.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.follow_path);
-            entity.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+            entity.GetComponent<SteeringBehaviours>().FollowPathEnabled = true;
+            entity.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
         }
         public override void Exit()
         {

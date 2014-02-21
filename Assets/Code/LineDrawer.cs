@@ -28,6 +28,10 @@ namespace BGE
 
         public static LineDrawer Instance()
         {
+            if (instance == null)
+            {
+                Debug.LogError("The LineDrawer must be attached to the camera to work! Otherwise dont call LineDrawer.DrawLine");
+            }
             return instance;
         }
 

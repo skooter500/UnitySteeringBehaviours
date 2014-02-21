@@ -19,10 +19,10 @@ namespace BGE.Scenarios
             Params.Load("default.txt");
 
             leader = CreateBoid(new Vector3(10, 120, -20), leaderPrefab);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.arrive);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.separation);
-            leader.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+            leader.GetComponent<SteeringBehaviours>().ArriveEnabled = true;
+            leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
+            leader.GetComponent<SteeringBehaviours>().SeparationEnabled = true;
+            leader.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
             leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(0, 100, 450);
 
             // Add some Obstacles
@@ -48,11 +48,11 @@ namespace BGE.Scenarios
                     GameObject fleet = CreateBoid(leader.transform.position + offset, boidPrefab);
                     fleet.GetComponent<SteeringBehaviours>().leader = leader;
                     fleet.GetComponent<SteeringBehaviours>().offset = offset;
-                    fleet.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+                    fleet.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
                     fleet.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(0, 0, 450);
-                    fleet.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
-                    fleet.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.separation);
-                    fleet.GetComponent<SteeringBehaviours>().turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+                    fleet.GetComponent<SteeringBehaviours>().OffsetPursuitEnabled = true;
+                    fleet.GetComponent<SteeringBehaviours>().SeparationEnabled = true;
+                    fleet.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
                 }
             }
 

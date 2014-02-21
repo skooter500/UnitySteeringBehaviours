@@ -135,17 +135,26 @@ namespace BGE
 
         public static void PrintMessage(string message)
         {
-            Instance().message.Append(message + "\n");
+            if (instance != null)
+            {
+                Instance().message.Append(message + "\n");
+            }
         }
 
         public static void PrintFloat(string message, float f)
         {
-            Instance().message.Append(message + ": " + f + "\n");
+            if (instance != null)
+            {
+                Instance().message.Append(message + ": " + f + "\n");
+            }
         }
 
         public static void PrintVector(string message, Vector3 v)
         {
-            Instance().message.Append(message + ": (" + v.x + ", " + v.y + ", " + v.z + ")\n");
+            if (instance != null)
+            {
+                Instance().message.Append(message + ": (" + v.x + ", " + v.y + ", " + v.z + ")\n");
+            }
         }
 
         // Update is called once per frame
