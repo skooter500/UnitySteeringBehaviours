@@ -11,6 +11,14 @@ public class ForceController : MonoBehaviour {
 
     public GameObject enemy;
 
+	Vector3 Pursuit(GameObject enemy)
+	{
+		Vector3 enemyVelocity = enemy.GetComponent<SteeringController> ().velocity;
+		Vector3 desired = enemy.transform.position + (enemyVelocity * Time.deltaTime);
+
+		return Seek (desired);
+	}
+
     Vector3 Flee(GameObject enemy)
     {
         float fleeDist = 5.0f;
