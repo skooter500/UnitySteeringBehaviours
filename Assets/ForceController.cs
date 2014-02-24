@@ -13,14 +13,30 @@ public class ForceController : MonoBehaviour {
 
 	Vector3 Pursuit(GameObject enemy)
 	{
-		Vector3 enemyVelocity = enemy.GetComponent<SteeringController> ().velocity;
-		Vector3 enemyNextStep = enemy.transform.position + (enemyVelocity * Time.deltaTime);
-
-		Vector3 toTarget = enemyNextStep - transform.position;
+		Vector3 toTarget = enemy.transform.position - transform.position;
 		float dist = toTarget.magnitude;
 		float time = dist / maxSpeed;
+		Vector3 targetPos = enemy.transform.position + 
+			(time * enemy.GetComponent<SteeringController>().velocity);
+		return Seek(targetPos);
+	}
 
-		return Seek (desired);
+	Vector3 Arrive(Vector3 target)
+	{
+		Vector3 toTarget = target - transform.position;
+		float distance = toTarget.magnitude;
+		float slowingDistance = 5.0f;
+		if (distance == 0.0f)
+		{
+			return Vector3.zero;
+		}
+		const float DecelerationTweak = 10.0f;
+		float rampedSpeed = maxSpeed * (distance / (slowingDistance * DecelerationTweak));
+		float clampedSpeed = Mathf.Min(maxSpeed, rampedSpeed);
+		Vector3 desiredVelocity = clampedSpeed * (toTarget / distance);
+
+		return desiredVelocity - velocity;
+
 	}
 
     Vector3 Flee(GameObject enemy)
@@ -75,7 +91,7 @@ public class ForceController : MonoBehaviour {
             forceAcc += transform.right * forceAmount;
         }
 
-        forceAcc += Flee(enemy);
+        forceAcc += Arrive(target);
 
         Vector3 accel = forceAcc / mass;
         //accel += gravity;
