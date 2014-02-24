@@ -14,7 +14,11 @@ public class ForceController : MonoBehaviour {
 	Vector3 Pursuit(GameObject enemy)
 	{
 		Vector3 enemyVelocity = enemy.GetComponent<SteeringController> ().velocity;
-		Vector3 desired = enemy.transform.position + (enemyVelocity * Time.deltaTime);
+		Vector3 enemyNextStep = enemy.transform.position + (enemyVelocity * Time.deltaTime);
+
+		Vector3 toTarget = enemyNextStep - transform.position;
+		float dist = toTarget.magnitude;
+		float time = dist / maxSpeed;
 
 		return Seek (desired);
 	}
