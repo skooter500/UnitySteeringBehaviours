@@ -8,6 +8,7 @@ public class ForceController : MonoBehaviour {
     public float mass;
     public Vector3 target = new Vector3(20, 5, 20);
     float maxSpeed = 10.0f;
+	public bool offsetPursuit = false;
 
     public GameObject enemy;
 
