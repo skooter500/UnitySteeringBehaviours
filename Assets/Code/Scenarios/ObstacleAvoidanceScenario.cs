@@ -23,17 +23,17 @@ namespace BGE.Scenarios
             leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
             leader.GetComponent<SteeringBehaviours>().SeparationEnabled = true;
             leader.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(0, 100, 450);
+            leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(10, 100, 550);
 
             // Add some Obstacles
-            CreateObstacle(new Vector3(0, 120, 10), 4);
-            CreateObstacle(new Vector3(-10, 116, 80), 17);
+            CreateObstacle(new Vector3(5, 115, 30), 5);
+            CreateObstacle(new Vector3(-10, 126, 80), 17);
             CreateObstacle(new Vector3(10, 115, 120), 10);
-            CreateObstacle(new Vector3(5, 90, 150), 12);
-            CreateObstacle(new Vector3(-2, 105, 200), 20);
+            CreateObstacle(new Vector3(5, 120, 150), 12);
+            CreateObstacle(new Vector3(-2, 125, 200), 20);
             CreateObstacle(new Vector3(-25, 80, 250), 10);
             CreateObstacle(new Vector3(20, 80, 250), 10);
-            CreateObstacle(new Vector3(5, 70, 320), 35);
+            CreateObstacle(new Vector3(5, 130, 350), 35);
 
             // Now make a fleet
             int fleetSize = 10;

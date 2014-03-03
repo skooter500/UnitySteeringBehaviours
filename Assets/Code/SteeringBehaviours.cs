@@ -454,7 +454,7 @@ namespace BGE
                         // Find the point of intersection
                         if (tempSphere.closestRayIntersects(ray, Vector3.zero, ref intersection) == false)
                         {
-                            return Vector3.zero;
+                            continue;
                         }
 
                         // Now see if its the closest, there may be other intersecting spheres
@@ -466,43 +466,47 @@ namespace BGE
                             localPosOfClosestObstacle = localPos;
                         }
                     }
-                }
-                if (closestIntersectingObstacle != null)
+                }                
+            }
+
+            if (closestIntersectingObstacle != null)
+            {
+                // Now calculate the force
+                float multiplier = 1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength;
+
+                //calculate the lateral force
+                float obstacleRadius = closestIntersectingObstacle.transform.localScale.x / 2; // closestIntersectingObstacle.GetComponent<Renderer>().bounds.extents.magnitude;
+                float expandedRadius = GetRadius() + obstacleRadius;
+                force.x = (expandedRadius - Math.Abs(localPosOfClosestObstacle.x)) * multiplier;
+                force.y = (expandedRadius - Math.Abs(localPosOfClosestObstacle.y)) * multiplier;
+
+                // Generate positive or negative direction so we steer around!
+                // Not always in the same direction as in Matt Bucklands book
+                if (localPosOfClosestObstacle.x > 0)
                 {
-                    // Now calculate the force
-                    // Calculate Z Axis braking  force
-                    float multiplier = 200 * (1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength);
-
-                    //calculate the lateral force
-                    float obstacleRadius = closestIntersectingObstacle.GetComponent<Renderer>().bounds.extents.magnitude;
-                    float expandedRadius = GetRadius() + obstacleRadius;
-                    force.x = (expandedRadius - Math.Abs(localPosOfClosestObstacle.x)) * multiplier;
-                    force.y = (expandedRadius - -Math.Abs(localPosOfClosestObstacle.y)) * multiplier;
-
-                    if (localPosOfClosestObstacle.x > 0)
-                    {
-                        force.x = -force.x;
-                    }
-
-                    if (localPosOfClosestObstacle.y > 0)
-                    {
-                        force.y = -force.y;
-                    }
-
-                    if (Params.drawDebugLines)
-                    {
-                        LineDrawer.DrawLine(transform.position, transform.position + transform.forward * boxLength, debugLineColour);                    
-                    }
-                    //apply a braking force proportional to the obstacle's distance from
-                    //the vehicle.
-                    const float brakingWeight = 40.0f;
-                    force.z = (obstacleRadius -
-                                       localPosOfClosestObstacle.z) *
-                                       brakingWeight;
-
-                    //finally, convert the steering vector from local to world space
-                    force = transform.TransformPoint(force);
+                    force.x = -force.x;
                 }
+
+                // If the obstacle is above, steer down
+                if (localPosOfClosestObstacle.y > 0)
+                {
+                    force.y = -force.y;
+                }
+
+                if (Params.drawDebugLines)
+                {
+                    LineDrawer.DrawLine(transform.position, transform.position + transform.forward * boxLength, debugLineColour);
+                }
+                //apply a braking force proportional to the obstacle's distance from
+                //the vehicle.
+                const float brakingWeight = 0.01f;
+                force.z = (expandedRadius -
+                                   localPosOfClosestObstacle.z) *
+                                   brakingWeight;
+
+                //finally, convert the steering vector from local to world space
+                // Dont include position!                    
+                force = transform.TransformDirection(force);
             }
 
 
