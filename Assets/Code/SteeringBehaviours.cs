@@ -585,7 +585,10 @@ namespace BGE
             //SteeringManager.PrintVector("Local Target", localTarget);
             //SteeringManager.PrintVector("Wander target pos", wanderTargetPos);
             //SteeringManager.PrintVector("World target", worldTarget);
-            LineDrawer.DrawTarget(worldTarget, Color.blue);
+            if (Params.drawDebugLines)
+            {
+                LineDrawer.DrawTarget(worldTarget, Color.blue);
+            }
             return (worldTarget - transform.position);
         }
 
