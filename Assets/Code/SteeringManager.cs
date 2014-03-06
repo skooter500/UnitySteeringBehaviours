@@ -49,6 +49,7 @@ namespace BGE
             scenarios.Add(new SeekScenario());
             scenarios.Add(new ArriveScenario());
             scenarios.Add(new PursueScenario());
+            scenarios.Add(new WanderScenario());
             scenarios.Add(new PathFollowingScenario());
             scenarios.Add(new ObstacleAvoidanceScenario());
             scenarios.Add(new FlockingScenario());

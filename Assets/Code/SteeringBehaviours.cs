@@ -470,14 +470,13 @@ namespace BGE
                 if (closestIntersectingObstacle != null)
                 {
                     // Now calculate the force
-                    // Calculate Z Axis braking  force
-                    float multiplier = 200 * (1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength);
+                    float multiplier = 600 * (1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength);
 
                     //calculate the lateral force
                     float obstacleRadius = closestIntersectingObstacle.GetComponent<Renderer>().bounds.extents.magnitude;
                     float expandedRadius = GetRadius() + obstacleRadius;
                     force.x = (expandedRadius - Math.Abs(localPosOfClosestObstacle.x)) * multiplier;
-                    force.y = (expandedRadius - -Math.Abs(localPosOfClosestObstacle.y)) * multiplier;
+                    force.y = (expandedRadius - Math.Abs(localPosOfClosestObstacle.y)) * multiplier;
 
                     if (localPosOfClosestObstacle.x > 0)
                     {
@@ -571,12 +570,17 @@ namespace BGE
         {
             float jitterTimeSlice = Params.GetFloat("wander_jitter") * timeDelta;
 
-            Vector3 toAdd = new Vector3(Utilities.RandomClamped(), Utilities.RandomClamped(), Utilities.RandomClamped()) * jitterTimeSlice;
+            Vector3 toAdd = UnityEngine.Random.insideUnitSphere * jitterTimeSlice;
             wanderTargetPos += toAdd;
             wanderTargetPos.Normalize();
             wanderTargetPos *= Params.GetFloat("wander_radius");
 
-            Vector3 worldTarget = transform.TransformPoint(wanderTargetPos + (Vector3.forward * Params.GetFloat("wander_distance")));
+            Vector3 localTarget = wanderTargetPos + Vector3.forward * Params.GetFloat("wander_distance");
+            Vector3 worldTarget = transform.TransformPoint(localTarget);
+            //SteeringManager.PrintVector("Local Target", localTarget);
+            //SteeringManager.PrintVector("Wander target pos", wanderTargetPos);
+            //SteeringManager.PrintVector("World target", worldTarget);
+            LineDrawer.DrawTarget(worldTarget, Color.blue);
             return (worldTarget - transform.position);
         }
 
@@ -760,7 +764,10 @@ namespace BGE
         // Use this for initialization
         void Start()
         {
-            maxSpeed = Params.GetFloat("max_speed");            
+            maxSpeed = Params.GetFloat("max_speed");
+
+            wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius"); 
+
         }
 
         private float GetRadius()
