@@ -470,7 +470,12 @@ namespace BGE
                 if (closestIntersectingObstacle != null)
                 {
                     // Now calculate the force
-                    float multiplier = 600 * (1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength);
+                    float multiplier = 1.0f + (boxLength - localPosOfClosestObstacle.z) / boxLength;
+
+                    /*
+                      double multiplier = 1.0 + (m_dDBoxLength - LocalPosOfClosestObstacle.x) /
+                        m_dDBoxLength;
+                    */
 
                     //calculate the lateral force
                     float obstacleRadius = closestIntersectingObstacle.GetComponent<Renderer>().bounds.extents.magnitude;
@@ -499,8 +504,10 @@ namespace BGE
                                        localPosOfClosestObstacle.z) *
                                        brakingWeight;
 
+
+
                     //finally, convert the steering vector from local to world space
-                    force = transform.TransformPoint(force);
+                    force = transform.TransformDirection(force);
                 }
             }
 
@@ -568,7 +575,7 @@ namespace BGE
 
         Vector3 Wander()
         {
-            float jitterTimeSlice = Params.GetFloat("wander_jitter") * timeDelta;
+            float jitterTimeSlice = Params.GetFloat("wander_jitter") * Time.deltaTime;
 
             Vector3 toAdd = UnityEngine.Random.insideUnitSphere * jitterTimeSlice;
             wanderTargetPos += toAdd;

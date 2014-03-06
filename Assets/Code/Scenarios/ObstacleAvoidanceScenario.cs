@@ -21,9 +21,9 @@ namespace BGE.Scenarios
             leader = CreateBoid(new Vector3(10, 120, -20), leaderPrefab);
             leader.GetComponent<SteeringBehaviours>().ArriveEnabled = true;
             leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().SeparationEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(0, 100, 450);
+            //leader.GetComponent<SteeringBehaviours>().SeparationEnabled = true;
+            //leader.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
+            //leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(0, 100, 450);
 
             // Add some Obstacles
             CreateObstacle(new Vector3(0, 120, 10), 4);
@@ -36,7 +36,7 @@ namespace BGE.Scenarios
             CreateObstacle(new Vector3(5, 70, 320), 35);
 
             // Now make a fleet
-            int fleetSize = 10;
+            int fleetSize = 0;
             float xOff = 12;
             float zOff = -12;
             for (int i = 2; i < fleetSize; i++)
