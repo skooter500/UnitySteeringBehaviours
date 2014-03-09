@@ -175,12 +175,28 @@ namespace BGE
             {
                 PrintMessage("Press " + i + " for " + scenarios[i].Description());
             }
-
+            GameObject ovrplayer = GameObject.FindGameObjectWithTag("ovrcamera");
+            GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
             if (camFollowing)
             {
-                GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
                 camera.transform.position = camFighter.transform.position;
                 camera.transform.rotation = camFighter.transform.rotation;
+
+                if (ovrplayer != null)
+                {
+                    ovrplayer.transform.position = camFighter.transform.position;
+                    ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
+                }
+            }
+            else
+            {
+                if (ovrplayer != null)
+                {
+                    //ovrplayer.transform.position = camera.transform.position;
+                    //ovrplayer.GetComponent<OVRCameraController>().transform.position = camera.transform.position;
+                    //ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camera.transform.rotation);
+
+                }
             }
       
             currentScenario.Update();
