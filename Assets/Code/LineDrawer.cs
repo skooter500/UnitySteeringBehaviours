@@ -24,25 +24,13 @@ namespace BGE
             }
         }
 
-        static LineDrawer instance;
-
-        public static LineDrawer Instance()
-        {
-            if (instance == null)
-            {
-                Debug.LogError("The LineDrawer must be attached to the camera to work! Otherwise dont call LineDrawer.DrawLine");
-            }
-            return instance;
-        }
-
-        List<Line> lines = new List<Line>();
+        static List<Line> lines = new List<Line>();
 
         Material lineMaterial;
 
         // Use this for initialization
         void Start()
         {
-            instance = this;
         }
 
         // Update is called once per frame
@@ -58,7 +46,7 @@ namespace BGE
 
         public static void DrawLine(Vector3 start, Vector3 end, Color colour)
         {
-            Instance().lines.Add(new Line(start, end, colour, false));
+            lines.Add(new Line(start, end, colour, false));
         }
 
         public static void DrawTarget(Vector3 target, Color colour)
@@ -80,7 +68,7 @@ namespace BGE
 
         public static void DrawArrowLine(Vector3 start, Vector3 end, Color color, Quaternion rot)
         {
-            Instance().lines.Add(new Line(start, end, color, false));
+            lines.Add(new Line(start, end, color, false));
 
 	        float side = 1;
 	        float back = -5;
@@ -94,8 +82,8 @@ namespace BGE
 		        points[i] = (rot * points[i]) + end;
 	        }
 
-            Instance().lines.Add(new Line(points[0], points[1], color, false));
-            Instance().lines.Add(new Line(points[2], points[1], color, false));
+            lines.Add(new Line(points[0], points[1], color, false));
+            lines.Add(new Line(points[2], points[1], color, false));
         }
 
         void CreateLineMaterial()

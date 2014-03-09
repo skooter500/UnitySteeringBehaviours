@@ -11,6 +11,7 @@ namespace BGE
         public Vector3 force;
         public Vector3 velocity;
         public Vector3 acceleration;
+        public Vector3 sphereCentre;
 
         public float defaultRadius = 5.0f;
 
@@ -31,6 +32,7 @@ namespace BGE
         private Vector3 randomWalkTarget;
         public Path path = new Path();
         public float maxSpeed;
+        public float maxForce;
 
         Color debugLineColour = Color.cyan;
 
@@ -38,7 +40,7 @@ namespace BGE
 
         #region Flags
 
-        public void turnOffAll()
+        public void TurnOffAll()
         {
             SeekEnabled= false;
             FleeEnabled= false;
@@ -115,7 +117,7 @@ namespace BGE
         {
             float soFar = runningTotal.magnitude;
 
-            float remaining = Params.GetFloat("max_force") - soFar;
+            float remaining = maxForce - soFar;
             if (remaining <= 0)
             {
                 return false;
@@ -397,7 +399,7 @@ namespace BGE
             Vector3 force = Vector3.zero;
             makeFeelers();
             List<GameObject> tagged = new List<GameObject>();
-            float minBoxLength = 20.0f;
+            float minBoxLength = 50.0f;
             float boxLength = minBoxLength + ((velocity.magnitude / maxSpeed) * minBoxLength * 2.0f);
 
             if (float.IsNaN(boxLength))
@@ -670,11 +672,11 @@ namespace BGE
 
         public Vector3 SphereConstrain(float radius)
         {
-            float distance = transform.position.magnitude;
+            Vector3 toTarget = transform.position - sphereCentre;
             Vector3 steeringForce = Vector3.zero;
-            if (distance > radius)
+            if (toTarget.magnitude > radius)
             {
-                steeringForce = Vector3.Normalize(transform.position) * (radius - distance);
+                steeringForce = Vector3.Normalize(toTarget) * (radius - toTarget.magnitude);
             }
             return steeringForce;
         }
@@ -772,10 +774,7 @@ namespace BGE
         // Use this for initialization
         void Start()
         {
-            maxSpeed = Params.GetFloat("max_speed");
-
-            wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius"); 
-
+            
         }
 
         private float GetRadius()
@@ -796,10 +795,13 @@ namespace BGE
             force = Vector3.zero;
             velocity = Vector3.zero;
             mass = 1.0f;
-            turnOffAll();
+            TurnOffAll();
             calculationMethod = CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation;
             target = null;
             leader = null;
+            maxSpeed = Params.GetFloat("max_speed");
+            maxForce = Params.GetFloat("max_force");
+            wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius"); 
         }
     }
 }

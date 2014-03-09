@@ -25,6 +25,10 @@ namespace BGE
         GUIStyle style = new GUIStyle();
 
         bool camFollowing = false;
+
+        GameObject monoCamera;
+        GameObject activeCamera;
+        GameObject riftCamera;             
         
         void Awake()
         {
@@ -33,13 +37,6 @@ namespace BGE
 
         void Start()
         {
-
-            Vector3[] points = new Vector3[3];
-            points[0] = new Vector3(1, 1, 1);
-            points[1] = new Vector3(1, 2, 0);
-            points[2] = new Vector3(-1, 2, 1);
-            Plane p = new Plane(points[0], points[1], points[2]);
-
             instance = this;
             Screen.showCursor = false;
 
@@ -55,8 +52,23 @@ namespace BGE
             scenarios.Add(new FlockingScenario());
             scenarios.Add(new StateMachineScenario());
             scenarios.Add(new PathFindingScenario());
+            scenarios.Add(new VRScenario());
             currentScenario = scenarios[0];
             currentScenario.Start();
+
+            monoCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
+
+            if (OVRDevice.SensorCount > 0)
+            {
+                riftCamera.SetActive(true);
+                activeCamera = riftCamera;
+            }
+            else
+            {
+                riftCamera.SetActive(false);
+                activeCamera = riftCamera;
+            }
 
         }
 
@@ -115,7 +127,7 @@ namespace BGE
                 {
                     Params.drawVectors = !Params.drawVectors;
                 }
-
+                
                 if (Event.current.keyCode == KeyCode.F6)
                 {
                     Params.drawDebugLines = !Params.drawDebugLines;
@@ -123,8 +135,23 @@ namespace BGE
 
                 if (Event.current.keyCode == KeyCode.F7)
                 {
-                    GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
-                    camera.transform.up = Vector3.up;
+                            
+                    Params.riftEnabled = !Params.riftEnabled;
+                    if (Params.riftEnabled)
+                    {
+                        riftCamera.SetActive(true);
+                        activeCamera = riftCamera;
+                    }
+                    else
+                    {
+                        riftCamera.SetActive(false);
+                        activeCamera = riftCamera;
+                    }                    
+                }
+
+                if (Event.current.keyCode == KeyCode.F8)
+                {
+                    activeCamera.transform.up = Vector3.up;
                 }
 
                 if (Event.current.keyCode == KeyCode.Escape)
@@ -167,7 +194,8 @@ namespace BGE
             PrintMessage("Press F4 to toggle messages");
             PrintMessage("Press F5 to toggle vector drawing");
             PrintMessage("Press F6 to toggle debug drawing");
-            PrintMessage("Press F7 to level camera");
+            PrintMessage("Press F7 to toggle Rift");
+            PrintMessage("Press F8 to level camera");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());

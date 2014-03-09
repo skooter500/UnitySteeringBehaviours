@@ -31,7 +31,7 @@ namespace BGE.Scenarios
             path.Waypoints.Add(initialPos + new Vector3(50, 0, 80));
             path.Looped = true;
             path.draw = true;
-            leader.GetComponent<SteeringBehaviours>().turnOffAll();
+            leader.GetComponent<SteeringBehaviours>().TurnOffAll();
             leader.GetComponent<SteeringBehaviours>().FollowPathEnabled = true;
             leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
 

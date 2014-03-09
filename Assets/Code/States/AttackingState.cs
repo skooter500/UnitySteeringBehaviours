@@ -20,7 +20,7 @@ namespace BGE.States
 
         public override void Enter()
         {
-            entity.GetComponent<SteeringBehaviours>().turnOffAll();
+            entity.GetComponent<SteeringBehaviours>().TurnOffAll();
             entity.GetComponent<SteeringBehaviours>().OffsetPursuitEnabled = true;
             entity.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
             entity.GetComponent<SteeringBehaviours>().offset = new Vector3(0, 0, 5);
