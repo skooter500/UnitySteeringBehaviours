@@ -32,8 +32,6 @@ namespace BGE
         public Path path = new Path();
         public float maxSpeed;
         public bool drawNeighbours = false;
-        private GameObject[] obstacles;
-        private GameObject[] allBoids;
 
         Color debugLineColour = Color.cyan;
 
@@ -150,7 +148,7 @@ namespace BGE
             }
             else
             {
-                boids = allBoids;
+                boids = GameObject.FindGameObjectsWithTag("boid");
             }
             foreach (GameObject boid in boids)
             {
@@ -443,6 +441,8 @@ namespace BGE
             {
                 System.Console.WriteLine("NAN");
             }
+
+            GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");
             // Matt Bucklands Obstacle avoidance
             // First tag obstacles in range
             if (obstacles.Length == 0)
@@ -451,6 +451,12 @@ namespace BGE
             }
             foreach (GameObject obstacle in obstacles)
             {
+                if (obstacle == null)
+                {
+                    Debug.Log("Null object");
+                    continue;
+                }
+                
                 Vector3 toCentre = transform.position - obstacle.transform.position;
                 float dist = toCentre.magnitude;
                 if (dist < boxLength)
@@ -725,8 +731,9 @@ namespace BGE
         {
             tagged.Clear();
 
-            GameObject[] boids = GameObject.FindGameObjectsWithTag("boid");
-            foreach (GameObject boid in boids)
+            GameObject[] allBoids = GameObject.FindGameObjectsWithTag("boid");
+
+            foreach (GameObject boid in allBoids)
             {
                 if (boid != gameObject)
                 {
@@ -850,9 +857,6 @@ namespace BGE
             maxSpeed = Params.GetFloat("max_speed");
 
             wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius");
-            obstacles = GameObject.FindGameObjectsWithTag("obstacle");
-            allBoids = GameObject.FindGameObjectsWithTag("boid");
-
         }
 
         private float GetRadius()

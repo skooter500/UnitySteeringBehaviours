@@ -89,8 +89,8 @@ namespace BGE.Scenarios
 
         public virtual void TearDown()
         {
-            DestroyObjectsWithTag("boid");
             DestroyObjectsWithTag("obstacle");
+            DestroyObjectsWithTag("boid");
             DestroyObjectsWithTag("camFollower");
         }
 
