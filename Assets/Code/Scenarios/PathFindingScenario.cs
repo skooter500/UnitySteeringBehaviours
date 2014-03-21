@@ -86,7 +86,7 @@ namespace BGE.Scenarios
                 Path path = pathFinder.FindPath(startPos, targetPos);
                 if (path.Waypoints.Count == 0)
                 {
-                    leader.GetComponent<SteeringBehaviours>().turnOffAll();
+                    leader.GetComponent<SteeringBehaviours>().TurnOffAll();
                 }
                 else
                 {

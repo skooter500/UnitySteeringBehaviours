@@ -14,10 +14,9 @@ namespace BGE
         public static bool showMessages = true;
         public static bool drawVectors = false;
         public static bool drawDebugLines = false;
-
         public static bool cellSpacePartitioning = false;
         public static bool enforceNonPenetrationConstraint = false;
-
+        public static bool riftEnabled = false;
         public static float timeModifier;
 
         static Params()

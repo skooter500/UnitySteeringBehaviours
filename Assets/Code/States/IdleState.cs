@@ -30,7 +30,7 @@ namespace BGE.States
             entity.GetComponent<SteeringBehaviours>().path.Waypoints.Add(initialPos + new Vector3(50, 0, 80));
             entity.GetComponent<SteeringBehaviours>().path.Looped = true;            
             entity.GetComponent<SteeringBehaviours>().path.draw = true;
-            entity.GetComponent<SteeringBehaviours>().turnOffAll();
+            entity.GetComponent<SteeringBehaviours>().TurnOffAll();
             entity.GetComponent<SteeringBehaviours>().FollowPathEnabled = true;
             entity.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
         }

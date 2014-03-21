@@ -21,7 +21,6 @@ namespace BGE.Scenarios
             leader = CreateBoid(new Vector3(10, 120, -20), leaderPrefab);
             leader.GetComponent<SteeringBehaviours>().ArriveEnabled = true;
             leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().SeparationEnabled = true;
             leader.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
             leader.GetComponent<SteeringBehaviours>().seekTargetPos = new Vector3(10, 100, 550);
 

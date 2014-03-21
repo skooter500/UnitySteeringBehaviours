@@ -26,6 +26,9 @@ namespace BGE
 
         bool camFollowing = false;
 
+        GameObject monoCamera;
+        GameObject activeCamera;
+        GameObject riftCamera;             
         
         void Awake()
         {
@@ -53,6 +56,20 @@ namespace BGE
             scenarios.Add(new PathFindingScenario());
             currentScenario = scenarios[0];
             currentScenario.Start();
+
+            monoCamera = GameObject.FindGameObjectWithTag("MainCamera");
+            riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
+
+            if (OVRDevice.SensorCount > 0)
+            {
+                riftCamera.SetActive(true);
+                activeCamera = riftCamera;
+            }
+            else
+            {
+                riftCamera.SetActive(false);
+                activeCamera = riftCamera;
+            }
 
         }
 
@@ -112,7 +129,7 @@ namespace BGE
                 {
                     Params.drawVectors = !Params.drawVectors;
                 }
-
+                
                 if (Event.current.keyCode == KeyCode.F6)
                 {
                     Params.drawDebugLines = !Params.drawDebugLines;
@@ -120,8 +137,7 @@ namespace BGE
 
                 if (Event.current.keyCode == KeyCode.F7)
                 {
-                    GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
-                    camera.transform.up = Vector3.up;
+                    activeCamera.transform.up = Vector3.up;
                 }
                 if (Event.current.keyCode == KeyCode.F8)
                 {
@@ -130,6 +146,21 @@ namespace BGE
                 if (Event.current.keyCode == KeyCode.F9)
                 {
                     Params.enforceNonPenetrationConstraint = !Params.enforceNonPenetrationConstraint;
+                }
+                if (Event.current.keyCode == KeyCode.F10)
+                {
+
+                    Params.riftEnabled = !Params.riftEnabled;
+                    if (Params.riftEnabled)
+                    {
+                        riftCamera.SetActive(true);
+                        activeCamera = riftCamera;
+                    }
+                    else
+                    {
+                        riftCamera.SetActive(false);
+                        activeCamera = riftCamera;
+                    }
                 }
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
@@ -174,6 +205,7 @@ namespace BGE
             PrintMessage("Press F7 to level camera");
             PrintMessage("Press F8 to toggle cell space partitioning");
             PrintMessage("Press F9 to toggle non-penetration constraint");
+            PrintMessage("Press F10 to toggle Rift");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());
@@ -181,12 +213,28 @@ namespace BGE
             {
                 PrintMessage("Press " + i + " for " + scenarios[i].Description());
             }
-
+            GameObject ovrplayer = GameObject.FindGameObjectWithTag("ovrcamera");
+            GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
             if (camFollowing)
             {
-                GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
                 camera.transform.position = camFighter.transform.position;
                 camera.transform.rotation = camFighter.transform.rotation;
+
+                if (ovrplayer != null)
+                {
+                    ovrplayer.transform.position = camFighter.transform.position;
+                    ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
+                }
+            }
+            else
+            {
+                if (ovrplayer != null)
+                {
+                    //ovrplayer.transform.position = camera.transform.position;
+                    //ovrplayer.GetComponent<OVRCameraController>().transform.position = camera.transform.position;
+                    //ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camera.transform.rotation);
+
+                }
             }
 
             if (Params.cellSpacePartitioning)

@@ -88,6 +88,12 @@ namespace BGE
             mouseX = Input.GetAxis("Mouse X");
             mouseY = Input.GetAxis("Mouse Y");
 
+            GameObject ovrplayer = GameObject.FindGameObjectWithTag("ovrcamera");
+            if (ovrplayer != null)
+            {
+                ovrplayer.transform.position = transform.position;
+            }
+            
             Yaw(mouseX);
             Pitch(-mouseY);
         }
