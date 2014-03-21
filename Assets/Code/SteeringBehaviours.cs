@@ -31,6 +31,9 @@ namespace BGE
         private Vector3 randomWalkTarget;
         public Path path = new Path();
         public float maxSpeed;
+        public bool drawNeighbours = false;
+        private GameObject[] obstacles;
+        private GameObject[] allBoids;
 
         Color debugLineColour = Color.cyan;
 
@@ -135,6 +138,37 @@ namespace BGE
             return true;
         }
 
+
+
+        private void EnforceNonPenetrationConstraint()
+        {
+            GameObject[] boids;
+            // Just use the tagged boids if we are flocking, otherwise get all the boids
+            if (tagged != null)
+            {
+                boids = tagged.ToArray();
+            }
+            else
+            {
+                boids = allBoids;
+            }
+            foreach (GameObject boid in boids)
+            {
+                if (boid == gameObject)
+                {
+                    continue;
+                }
+                Vector3 toOther = boid.transform.position - gameObject.transform.position;
+                float distance = toOther.magnitude;
+                float overlap = GetRadius() + boid.GetComponent<SteeringBehaviours>().GetRadius() - distance;
+                if (overlap >= 0)
+                {
+                    boid.transform.position = (boid.transform.position + (toOther / distance) *
+                     overlap);
+                }
+            }
+        }
+
         public Vector3 Calculate()
         {
             if (calculationMethod == CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation)
@@ -149,6 +183,7 @@ namespace BGE
         {
             Vector3 force = Vector3.zero;
             Vector3 steeringForce = Vector3.zero;
+
 
             if (ObstacleAvoidanceEnabled)
             {
@@ -201,7 +236,17 @@ namespace BGE
             int tagged = 0;
             if (SeparationEnabled || CohesionEnabled || AlignmentEnabled)
             {
-                tagged = TagNeighboursSimple(Params.GetFloat("tag_range"));
+                if (Params.cellSpacePartitioning)
+                {
+                    SteeringManager.Instance.space.Partition();
+                    tagged = TagNeighboursPartitioned(Params.GetFloat("tag_range"));
+                    //int testTagged = TagNeighboursSimple(Params.GetFloat("tag_range"));
+                    //Debug.Log(tagged + "\t" + testTagged); // These numbers should be the same
+                }
+                else
+                {
+                    tagged = TagNeighboursSimple(Params.GetFloat("tag_range"));
+                }
             }
 
             if (SeparationEnabled && (tagged > 0))
@@ -349,20 +394,14 @@ namespace BGE
                 velocity *= 0.99f;
             }
 
+            
+
             path.Draw();
 
-            //Vector3 acceleration = Calculate() / mass;
-            //velocity += acceleration * Time.deltaTime;
-            //gameObject.transform.position += velocity * Time.deltaTime;
-
-            //force = Vector3.zero;
-
-            //if (velocity.magnitude > 0.01f)
-            //{
-            //    gameObject.transform.forward = Vector3.Normalize(velocity);
-            //}
-
-            //velocity *= 0.99f;
+            if (Params.enforceNonPenetrationConstraint)
+            {
+                EnforceNonPenetrationConstraint();
+            }           
         }
 
         #endregion
@@ -406,7 +445,6 @@ namespace BGE
             }
             // Matt Bucklands Obstacle avoidance
             // First tag obstacles in range
-            GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");
             if (obstacles.Length == 0)
             {
                 return Vector3.zero;
@@ -560,11 +598,12 @@ namespace BGE
         Vector3 RandomWalk()
         {
             float dist = (transform.position - randomWalkTarget).magnitude;
+            float range = Params.GetFloat("world_range");
             if (dist < 50)
             {
-                randomWalkTarget.x = Utilities.RandomClamped() * Params.GetFloat("world_range");
-                randomWalkTarget.y = Utilities.RandomClamped(0, Params.GetFloat("world_range") / 2.0f);
-                randomWalkTarget.z = Utilities.RandomClamped() * Params.GetFloat("world_range");
+                randomWalkTarget.x = UnityEngine.Random.Range(-range, range);
+                randomWalkTarget.y = UnityEngine.Random.Range(0, range / 2.0f);
+                randomWalkTarget.z = UnityEngine.Random.Range(-range, range);
             }
             return Seek(randomWalkTarget);
         }
@@ -686,18 +725,54 @@ namespace BGE
         {
             tagged.Clear();
 
-            GameObject[] steerables = GameObject.FindGameObjectsWithTag("boid");
-            foreach (GameObject steerable in steerables)
+            GameObject[] boids = GameObject.FindGameObjectsWithTag("boid");
+            foreach (GameObject boid in boids)
             {
-                if (steerable != gameObject)
+                if (boid != gameObject)
                 {
-                    if ((transform.position - steerable.transform.position).magnitude < inRange)
+                    if ((transform.position - boid.transform.position).magnitude < inRange)
                     {
-                        tagged.Add(steerable);
+                        tagged.Add(boid);
                     }
                 }
             }
             return tagged.Count;
+        }
+
+        private int TagNeighboursPartitioned(float inRange)
+        {
+            Bounds expanded = new Bounds();
+            expanded.min = new Vector3(transform.position.x - inRange, transform.position.y - inRange, transform.position.z - inRange);
+            expanded.max = new Vector3(transform.position.x + inRange, transform.position.y + inRange, transform.position.z + inRange);
+
+            List<Cell> cells = SteeringManager.Instance.space.cells;
+            tagged.Clear();
+            int myCellIndex = SteeringManager.Instance.space.FindCell(transform.position);
+            if (myCellIndex == -1)
+            {
+                // Im outside the cells so return
+                return 0;
+            }
+            Cell myCell = SteeringManager.Instance.space.cells[myCellIndex];
+            
+            foreach (Cell cell in myCell.adjacent)
+            {
+                if (cell.Intersects(expanded))
+                {
+                    List<GameObject> entities = cell.contained;
+                    foreach (GameObject neighbour in entities)
+                    {
+                        if (neighbour != gameObject)
+                        {
+                            if ((transform.position - neighbour.transform.position).magnitude < inRange)
+                            {
+                                tagged.Add(neighbour);
+                            }
+                        }
+                    }
+                }
+            }
+            return this.tagged.Count;
         }
 
         public Vector3 Separation()
@@ -774,7 +849,9 @@ namespace BGE
         {
             maxSpeed = Params.GetFloat("max_speed");
 
-            wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius"); 
+            wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius");
+            obstacles = GameObject.FindGameObjectsWithTag("obstacle");
+            allBoids = GameObject.FindGameObjectsWithTag("boid");
 
         }
 

@@ -19,12 +19,13 @@ namespace BGE
 
         public GameObject boidPrefab;
         public GameObject leaderPrefab;
-
+        public Space space;
         static SteeringManager instance;
         // Use this for initialization
         GUIStyle style = new GUIStyle();
 
         bool camFollowing = false;
+
         
         void Awake()
         {
@@ -46,6 +47,8 @@ namespace BGE
             style.fontSize = 18;
             style.normal.textColor = Color.white;
 
+            space = new Space();
+            
             scenarios.Add(new SeekScenario());
             scenarios.Add(new ArriveScenario());
             scenarios.Add(new PursueScenario());
@@ -60,12 +63,13 @@ namespace BGE
 
         }
 
-        public static SteeringManager Instance()
+        public static SteeringManager Instance
         {
-            return instance;
+            get
+            {
+                return instance;
+            }
         }
-
-        
 
         void OnGUI()
         {
@@ -126,7 +130,14 @@ namespace BGE
                     GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
                     camera.transform.up = Vector3.up;
                 }
-
+                if (Event.current.keyCode == KeyCode.F8)
+                {
+                    Params.cellSpacePartitioning = !Params.cellSpacePartitioning;
+                }
+                if (Event.current.keyCode == KeyCode.F9)
+                {
+                    Params.enforceNonPenetrationConstraint = !Params.enforceNonPenetrationConstraint;
+                }
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
                     Application.Quit();
@@ -138,7 +149,7 @@ namespace BGE
         {
             if (instance != null)
             {
-                Instance().message.Append(message + "\n");
+                Instance.message.Append(message + "\n");
             }
         }
 
@@ -146,7 +157,7 @@ namespace BGE
         {
             if (instance != null)
             {
-                Instance().message.Append(message + ": " + f + "\n");
+                Instance.message.Append(message + ": " + f + "\n");
             }
         }
 
@@ -154,7 +165,7 @@ namespace BGE
         {
             if (instance != null)
             {
-                Instance().message.Append(message + ": (" + v.x + ", " + v.y + ", " + v.z + ")\n");
+                Instance.message.Append(message + ": (" + v.x + ", " + v.y + ", " + v.z + ")\n");
             }
         }
 
@@ -162,12 +173,14 @@ namespace BGE
         void Update()
         {
             PrintMessage("Press F1 to toggle cam following");
-            PrintMessage("Press F2 to slow down");
-            PrintMessage("Press F3 to speed up");
+            PrintMessage("Press F2 to speed up");
+            PrintMessage("Press F3 to slow down");
             PrintMessage("Press F4 to toggle messages");
             PrintMessage("Press F5 to toggle vector drawing");
             PrintMessage("Press F6 to toggle debug drawing");
             PrintMessage("Press F7 to level camera");
+            PrintMessage("Press F8 to toggle cell space partitioning");
+            PrintMessage("Press F9 to toggle non-penetration constraint");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());
@@ -182,8 +195,39 @@ namespace BGE
                 camera.transform.position = camFighter.transform.position;
                 camera.transform.rotation = camFighter.transform.rotation;
             }
+
+            if (Params.cellSpacePartitioning)
+            {
+                PrintMessage("Cell space partitioning on");
+            }
+            else
+            {
+                PrintMessage("Cell space partitioning off");
+            }
+
+            if (Params.enforceNonPenetrationConstraint)
+            {
+                PrintMessage("Enforce non penetration constraint on");
+            }
+            else
+            {
+                PrintMessage("Enforce non penetration constraint off");
+            }
+
+            if (Params.drawDebugLines)
+            {
+                space.Draw();
+            }
       
             currentScenario.Update();
+        }
+
+        void LateUpdate()
+        {
+            if (Params.cellSpacePartitioning)
+            {
+                space.needsPartitioning = true;
+            }
         }
     }
 }

@@ -24,5 +24,5 @@ hide_weight = 1
 evade_weight = 0.01
 follow_path_weight = 1
 random_walk_weight = 1
-num_boids = 150
-cell_width = 50
+num_boids = 200
+cell_width = 100

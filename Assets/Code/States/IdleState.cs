@@ -43,7 +43,7 @@ namespace BGE.States
         {
             float range = 50.0f;           
             // Can I see the leader?
-            GameObject leader = SteeringManager.Instance().currentScenario.leader;
+            GameObject leader = SteeringManager.Instance.currentScenario.leader;
             if ((leader.transform.position - entity.transform.position).magnitude < range)
             {
                 // Is the leader inside my FOV

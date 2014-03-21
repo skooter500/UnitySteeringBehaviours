@@ -11,8 +11,8 @@ namespace BGE.Scenarios
     {
         System.Random random = new System.Random(DateTime.Now.Millisecond);
 
-        public GameObject leaderPrefab = SteeringManager.Instance().leaderPrefab;
-        public GameObject boidPrefab = SteeringManager.Instance().boidPrefab;
+        public GameObject leaderPrefab = SteeringManager.Instance.leaderPrefab;
+        public GameObject boidPrefab = SteeringManager.Instance.boidPrefab;
 
         public abstract string Description();
         public abstract void Start();
@@ -81,7 +81,7 @@ namespace BGE.Scenarios
             camFollower.GetComponent<SteeringBehaviours>().OffsetPursuitEnabled = true;
             //camFighter.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
             camFollower.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
-            SteeringManager.Instance().camFighter = camFollower;
+            SteeringManager.Instance.camFighter = camFollower;
             GameObject.FindGameObjectWithTag("MainCamera").transform.position = camFollower.transform.position;
 
             return camFollower;

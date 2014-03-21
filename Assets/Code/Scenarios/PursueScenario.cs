@@ -24,6 +24,8 @@ namespace BGE.Scenarios
             boid.GetComponent<SteeringBehaviours>().leader = leader;
 
             CreateCamFollower(boid, new Vector3(0, 5, -10));
+
+            
         }
     }
 }

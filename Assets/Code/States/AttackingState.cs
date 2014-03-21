@@ -24,7 +24,7 @@ namespace BGE.States
             entity.GetComponent<SteeringBehaviours>().OffsetPursuitEnabled = true;
             entity.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
             entity.GetComponent<SteeringBehaviours>().offset = new Vector3(0, 0, 5);
-            entity.GetComponent<SteeringBehaviours>().leader = SteeringManager.Instance().currentScenario.leader;
+            entity.GetComponent<SteeringBehaviours>().leader = SteeringManager.Instance.currentScenario.leader;
         }
 
         public override void Exit()
@@ -37,7 +37,7 @@ namespace BGE.States
             timeShot += Time.deltaTime;
             float fov = Mathf.PI / 4.0f;
             // Can I see the leader?
-            GameObject leader = SteeringManager.Instance().currentScenario.leader;
+            GameObject leader = SteeringManager.Instance.currentScenario.leader;
             if ((leader.transform.position - entity.transform.position).magnitude > range)
             {
                 entity.GetComponent<StateMachine>().SwicthState(new IdleState(entity));

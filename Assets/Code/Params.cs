@@ -14,6 +14,10 @@ namespace BGE
         public static bool showMessages = true;
         public static bool drawVectors = false;
         public static bool drawDebugLines = false;
+
+        public static bool cellSpacePartitioning = false;
+        public static bool enforceNonPenetrationConstraint = false;
+
         public static float timeModifier;
 
         static Params()
@@ -89,6 +93,8 @@ namespace BGE
                     dictionary[key] = value;
                 }
             }
+
+            SteeringManager.Instance.space = new Space();
 
             timeModifier = 0.0f;
         }

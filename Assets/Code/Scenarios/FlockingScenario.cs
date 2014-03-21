@@ -39,7 +39,7 @@ namespace BGE.Scenarios
             }
 
             // Create some obstacles..
-            int numObstacles = 6;
+            int numObstacles = 5;
             float dist = (range * 2) / numObstacles;
             float radius = 20.0f;
             for (float x = -range; x < range; x += dist)
@@ -53,6 +53,8 @@ namespace BGE.Scenarios
             GroundEnabled(false);
 
             CreateCamFollower(boid, new Vector3(0, 0, -10));
+
+            
         }
     }
 }

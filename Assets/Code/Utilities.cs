@@ -20,13 +20,11 @@ namespace BGE
         public static Vector3 RandomPosition(float range)
         {
             Vector3 pos = new Vector3();
-            pos.x = (RNG.Next() % range) - (range / 2);
-            pos.y = (RNG.Next() % range) - (range / 2);
-            pos.z = (RNG.Next() % range) - (range / 2);
+            pos.x = UnityEngine.Random.Range(-range, range);
+            pos.y = UnityEngine.Random.Range(-range, range);
+            pos.z = UnityEngine.Random.Range(-range, range);
             return pos;
         }
-
-        public static System.Random RNG = new System.Random(DateTime.Now.Millisecond);
 
         public static float Interpolate(float alpha, float x0, float x1)
         {
@@ -38,20 +36,6 @@ namespace BGE
             return x0 + ((x1 - x0) * alpha);
         }
 
-        // ----------------------------------------------------------------------------
-        // Random number utilities
-
-        // Returns a float randomly distributed between 0 and 1
-        public static float Random()
-        {
-            return (float)RNG.NextDouble();
-        }
-
-        // Returns a float randomly distributed between lowerBound and upperBound
-        public static float Random(float lowerBound, float upperBound)
-        {
-            return lowerBound + (Random() * (upperBound - lowerBound));
-        }
 
         /// <summary>
         /// Constrain a given value (x) to be between two (ordered) bounds min
@@ -104,13 +88,13 @@ namespace BGE
             return 0;
         }
 
-        public static float ScalarRandomWalk(float initial, float walkspeed, float min, float max)
-        {
-            float next = initial + (((Random() * 2) - 1) * walkspeed);
-            if (next < min) return min;
-            if (next > max) return max;
-            return next;
-        }
+        //public static float ScalarRandomWalk(float initial, float walkspeed, float min, float max)
+        //{
+        //    float next = initial + (((Random() * 2) - 1) * walkspeed);
+        //    if (next < min) return min;
+        //    if (next > max) return max;
+        //    return next;
+        //}
 
         public static float Square(float x)
         {
@@ -144,15 +128,6 @@ namespace BGE
             smoothedAccumulator = Interpolate(Clip(smoothRate, 0, 1), smoothedAccumulator, newValue);
         }
 
-        public static float RandomClamped()
-        {
-            return 1.0f - ((float)RNG.NextDouble() * 2.0f);
-        }
-
-        public static float RandomClamped(float lower, float upper)
-        {
-            return lower + ((float)RNG.NextDouble() * (upper - lower));
-        }
 
         static public bool checkNaN(ref Vector3 v, Vector3 def)
         {

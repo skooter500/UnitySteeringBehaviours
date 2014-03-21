@@ -44,6 +44,8 @@ namespace BGE.Scenarios
             CreateCamFollower(leader, new Vector3(0, 5, -10));
 
             GroundEnabled(false);
+
+            
         }
 
         public override void Update()
