@@ -28,6 +28,7 @@ namespace BGE.Scenarios
             GameObject boid = null;
             // Pick a random boid and draw it's neighbours
             int whichBoid = UnityEngine.Random.Range(0, Params.GetInt("num_boids") - 1);
+            GameObject camBoid = null;
             for (int i = 0; i < Params.GetInt("num_boids"); i++)
             {
                 Vector3 pos = Utilities.RandomPosition(range);
@@ -41,6 +42,7 @@ namespace BGE.Scenarios
                 if (i == whichBoid)
                 {
                     boid.GetComponent<SteeringBehaviours>().drawNeighbours = true;
+                    camBoid = boid;
                 }
                 else
                 {
@@ -64,7 +66,7 @@ namespace BGE.Scenarios
 
             GroundEnabled(false);
 
-            CreateCamFollower(boid, new Vector3(0, 0, -10));
+            CreateCamFollower(camBoid, new Vector3(0, 0, -10));
         }
     }
 }

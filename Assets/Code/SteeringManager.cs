@@ -55,7 +55,6 @@ namespace BGE
             scenarios.Add(new StateMachineScenario());
             scenarios.Add(new PathFindingScenario());
             currentScenario = scenarios[0];
-            Params.cellSpacePartitioning = true;
             currentScenario.Start();
 
             monoCamera = GameObject.FindGameObjectWithTag("MainCamera");
