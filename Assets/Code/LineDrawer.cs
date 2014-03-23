@@ -71,7 +71,32 @@ namespace BGE
             DrawLine(new Vector3(target.x - dist, target.y, target.z), new Vector3(target.x + dist, target.y, target.z), colour);
             DrawLine(new Vector3(target.x, target.y - dist, target.z), new Vector3(target.x, target.y + dist, target.z), colour);
             DrawLine(new Vector3(target.x, target.y, target.z - dist), new Vector3(target.x, target.y, target.z + dist), colour);
-        }        
+        }
+
+        public static void DrawSquare(Vector3 min, Vector3 max, Color colour)
+        {
+            Vector3 tl = new Vector3(min.x, min.y, max.z);
+            Vector3 br = new Vector3(max.x, min.y, min.z);
+                
+            LineDrawer.DrawLine(min, tl, colour);
+            LineDrawer.DrawLine(tl, max, colour);
+            LineDrawer.DrawLine(max, br, colour);
+            LineDrawer.DrawLine(br, min, colour);
+        }
+
+        public static void DrawCircle(Vector3 centre, float radius, int points, Color colour)
+        {
+            float thetaInc = (Mathf.PI * 2.0f) / (float)points;
+            Vector3 lastPoint = centre + new Vector3(0, 0, radius);
+            for (int i = 1; i <= points; i++)
+            {
+                float theta = thetaInc * i;
+                Vector3 point = centre + 
+                    (new Vector3((float) Math.Sin(theta), 0, (float) Math.Cos(theta)) * radius);
+                DrawLine(lastPoint, point, colour);
+                lastPoint = point;
+            }
+        }
 
         public static void DrawVectors(Transform transform)
         {
@@ -129,7 +154,6 @@ namespace BGE
                 GL.Color(line.color);
                 GL.Vertex3(line.start.x, line.start.y, line.start.z);
                 GL.Vertex3(line.end.x, line.end.y, line.end.z);
-
             }
             GL.End();
             lines.Clear();

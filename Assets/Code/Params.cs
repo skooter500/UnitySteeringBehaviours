@@ -40,7 +40,20 @@ namespace BGE
             }
             catch (Exception e)
             {
-                PrintException(key, e);                
+                PrintException(key, e);
+            }
+            return -1;
+        }
+
+        public static int GetInt(string key)
+        {
+            try
+            {
+                return int.Parse("" + dictionary[key]);
+            }
+            catch (Exception e)
+            {
+                PrintException(key, e);
             }
             return -1;
         }
@@ -95,7 +108,7 @@ namespace BGE
 
             SteeringManager.Instance.space = new Space();
 
-            timeModifier = 0.0f;
+            timeModifier = 1.0f;
         }
     }
 }

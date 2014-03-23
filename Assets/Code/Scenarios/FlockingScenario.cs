@@ -26,7 +26,9 @@ namespace BGE.Scenarios
 
             // Create the boids
             GameObject boid = null;
-            for (int i = 0; i < Params.GetFloat("num_boids"); i++)
+            // Pick a random boid and draw it's neighbours
+            int whichBoid = UnityEngine.Random.Range(0, Params.GetInt("num_boids") - 1);
+            for (int i = 0; i < Params.GetInt("num_boids"); i++)
             {
                 Vector3 pos = Utilities.RandomPosition(range);
                 boid = CreateBoid(pos, boidPrefab);
@@ -36,7 +38,17 @@ namespace BGE.Scenarios
                 boid.GetComponent<SteeringBehaviours>().WanderEnabled = true;
                 boid.GetComponent<SteeringBehaviours>().SphereConstrainEnabled = true;
                 boid.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
+                if (i == whichBoid)
+                {
+                    boid.GetComponent<SteeringBehaviours>().drawNeighbours = true;
+                }
+                else
+                {
+                    boid.GetComponent<SteeringBehaviours>().drawNeighbours = false;
+                }
             }
+
+            
 
             // Create some obstacles..
             int numObstacles = 5;
@@ -53,8 +65,6 @@ namespace BGE.Scenarios
             GroundEnabled(false);
 
             CreateCamFollower(boid, new Vector3(0, 0, -10));
-
-            
         }
     }
 }

@@ -55,6 +55,7 @@ namespace BGE
             scenarios.Add(new StateMachineScenario());
             scenarios.Add(new PathFindingScenario());
             currentScenario = scenarios[0];
+            Params.cellSpacePartitioning = true;
             currentScenario.Start();
 
             monoCamera = GameObject.FindGameObjectWithTag("MainCamera");
@@ -68,7 +69,7 @@ namespace BGE
             else
             {
                 riftCamera.SetActive(false);
-                activeCamera = riftCamera;
+                activeCamera = monoCamera;
             }
 
         }
@@ -109,7 +110,7 @@ namespace BGE
                     }
                 }
 
-                float timeModRate = 0.01f;
+                float timeModRate = 0.1f;
                 if (Event.current.keyCode == KeyCode.F2)
                 {
                     Params.timeModifier += Time.deltaTime * timeModRate;
@@ -162,6 +163,19 @@ namespace BGE
                         activeCamera = riftCamera;
                     }
                 }
+
+                if (Event.current.keyCode == KeyCode.F11)
+                {
+                    if (Params.timeModifier != 0)
+                    {
+                        Params.timeModifier = 0.0f;
+                    }
+                    else
+                    {
+                        Params.timeModifier = 1.0f;
+                    }
+                }
+                
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
                     Application.Quit();
@@ -267,7 +281,7 @@ namespace BGE
         {
             if (Params.cellSpacePartitioning)
             {
-                space.needsPartitioning = true;
+                space.Partition();                    
             }
         }
     }

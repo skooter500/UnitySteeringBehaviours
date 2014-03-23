@@ -238,10 +238,13 @@ namespace BGE
             {
                 if (Params.cellSpacePartitioning)
                 {
-                    SteeringManager.Instance.space.Partition();
                     tagged = TagNeighboursPartitioned(Params.GetFloat("tag_range"));
                     //int testTagged = TagNeighboursSimple(Params.GetFloat("tag_range"));
                     //Debug.Log(tagged + "\t" + testTagged); // These numbers should be the same
+                    //if (tagged != testTagged)
+                    {
+                        //Debug.Log("Different!!"); // These numbers should be the same                                          
+                    }
                 }
                 else
                 {
@@ -353,7 +356,7 @@ namespace BGE
                 LineDrawer.DrawVectors(transform);
             }
 
-            timeDelta = Time.deltaTime + Params.timeModifier;
+            timeDelta = Time.deltaTime * Params.timeModifier;
 
             if (timeDelta > 0.0f)
             {
@@ -541,7 +544,7 @@ namespace BGE
 
                 if (Params.drawDebugLines)
                 {
-                    LineDrawer.DrawLine(transform.position, transform.position + transform.forward * boxLength, debugLineColour);
+                    LineDrawer.DrawLine(transform.position, transform.position + transform.forward * boxLength, Color.grey);
                 }
                 //apply a braking force proportional to the obstacle's distance from
                 //the vehicle.
@@ -620,7 +623,7 @@ namespace BGE
 
         Vector3 Wander()
         {
-            float jitterTimeSlice = Params.GetFloat("wander_jitter") * Time.deltaTime;
+            float jitterTimeSlice = Params.GetFloat("wander_jitter") * timeDelta;
 
             Vector3 toAdd = UnityEngine.Random.insideUnitSphere * jitterTimeSlice;
             wanderTargetPos += toAdd;
@@ -629,9 +632,6 @@ namespace BGE
 
             Vector3 localTarget = wanderTargetPos + Vector3.forward * Params.GetFloat("wander_distance");
             Vector3 worldTarget = transform.TransformPoint(localTarget);
-            //SteeringManager.PrintVector("Local Target", localTarget);
-            //SteeringManager.PrintVector("Wander target pos", wanderTargetPos);
-            //SteeringManager.PrintVector("World target", worldTarget);
             if (Params.drawDebugLines)
             {
                 LineDrawer.DrawTarget(worldTarget, Color.blue);
@@ -745,14 +745,32 @@ namespace BGE
                     }
                 }
             }
+            DrawNeighbours(Color.white);
             return tagged.Count;
+        }
+
+        private void DrawNeighbours(Color color)
+        {
+            if ((drawNeighbours) && (Params.drawDebugLines))
+            {
+                foreach (GameObject neighbour in tagged)
+                {
+                    LineDrawer.DrawCircle(neighbour.transform.position, 5, 10, color);
+                }
+                LineDrawer.DrawCircle(transform.position, 5, 10, Color.red);
+            }            
         }
 
         private int TagNeighboursPartitioned(float inRange)
         {
             Bounds expanded = new Bounds();
-            expanded.min = new Vector3(transform.position.x - inRange, transform.position.y - inRange, transform.position.z - inRange);
-            expanded.max = new Vector3(transform.position.x + inRange, transform.position.y + inRange, transform.position.z + inRange);
+            expanded.min = new Vector3(transform.position.x - inRange, 0, transform.position.z - inRange);
+            expanded.max = new Vector3(transform.position.x + inRange, 0, transform.position.z + inRange);
+
+            if (drawNeighbours && Params.drawDebugLines)
+            {
+                LineDrawer.DrawSquare(expanded.min, expanded.max, Color.yellow);
+            }
 
             List<Cell> cells = SteeringManager.Instance.space.cells;
             tagged.Clear();
@@ -768,12 +786,22 @@ namespace BGE
             {
                 if (cell.Intersects(expanded))
                 {
+                    if (drawNeighbours && Params.drawDebugLines)
+                    {
+                        LineDrawer.DrawSquare(cell.bounds.min, cell.bounds.max, Color.magenta);
+                    }
                     List<GameObject> entities = cell.contained;
+                    float rangeSquared = inRange * inRange;
                     foreach (GameObject neighbour in entities)
                     {
                         if (neighbour != gameObject)
                         {
-                            if ((transform.position - neighbour.transform.position).magnitude < inRange)
+                            if (drawNeighbours && Params.drawDebugLines)
+                            {
+                                LineDrawer.DrawCircle(neighbour.transform.position, 5, 10, Color.green);
+                            }
+                            
+                            if (Vector3.SqrMagnitude(transform.position - neighbour.transform.position) < rangeSquared)
                             {
                                 tagged.Add(neighbour);
                             }
@@ -781,6 +809,9 @@ namespace BGE
                     }
                 }
             }
+
+            DrawNeighbours(Color.white);
+
             return this.tagged.Count;
         }
 

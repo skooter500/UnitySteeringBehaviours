@@ -12,7 +12,6 @@ namespace BGE
         float worldRadius;
         int spaceWidth;
         float cellWidth;
-        public bool needsPartitioning = true;
         GameObject[] boids; 
 
         public Space()
@@ -49,12 +48,9 @@ namespace BGE
                 expanded.max = expanded.max + extra;
                 foreach (Cell neighbour in cells)
                 {
-                    if (cell != neighbour)
+                    if (neighbour.Intersects(expanded))
                     {
-                        if (neighbour.Intersects(expanded))
-                        {
-                            cell.adjacent.Add(neighbour);
-                        }
+                        cell.adjacent.Add(neighbour);
                     }
                 }
             }
@@ -83,12 +79,7 @@ namespace BGE
         {
             foreach (Cell cell in cells)
             {
-                Vector3 tl = new Vector3(cell.bounds.min.x, cell.bounds.min.y, cell.bounds.max.z);
-                Vector3 br = new Vector3(cell.bounds.max.x, cell.bounds.min.y, cell.bounds.min.z);
-                LineDrawer.DrawLine(cell.bounds.min, tl, Color.cyan);
-                LineDrawer.DrawLine(tl, cell.bounds.max, Color.cyan);
-                LineDrawer.DrawLine(cell.bounds.max, br, Color.cyan);
-                LineDrawer.DrawLine(br, cell.bounds.min, Color.cyan);
+                LineDrawer.DrawSquare(cell.bounds.min, cell.bounds.max, Color.cyan);
             }
         }
 
@@ -97,10 +88,6 @@ namespace BGE
             if (boids == null)
             {
                 boids = GameObject.FindGameObjectsWithTag("boid");            
-            }
-            if (!needsPartitioning)
-            {
-                return;
             }
             foreach (Cell cell in cells)
             {
