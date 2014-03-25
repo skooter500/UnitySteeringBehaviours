@@ -24,8 +24,7 @@ namespace BGE
         // Use this for initialization
         GUIStyle style = new GUIStyle();
 
-        bool camFollowing = false;
-
+        
         GameObject monoCamera;
         GameObject activeCamera;
         GameObject riftCamera;             
@@ -96,7 +95,7 @@ namespace BGE
             {
                 if (Event.current.keyCode == KeyCode.F1)
                 {
-                    camFollowing = !camFollowing;
+                    Params.camMode = (Params.camMode + 1) % 3;
                 }
 
                 for (int i = 0; i < scenarios.Count; i++)
@@ -149,21 +148,15 @@ namespace BGE
                 }
                 if (Event.current.keyCode == KeyCode.F10)
                 {
-
-                    Params.riftEnabled = !Params.riftEnabled;
-                    if (Params.riftEnabled)
-                    {
-                        riftCamera.SetActive(true);
-                        activeCamera = riftCamera;
-                    }
-                    else
-                    {
-                        riftCamera.SetActive(false);
-                        activeCamera = riftCamera;
-                    }
+                    Params.riftEnabled = !Params.riftEnabled;                    
                 }
 
                 if (Event.current.keyCode == KeyCode.F11)
+                {
+                    Params.drawForces = !Params.drawForces;
+                }                
+
+                if (Event.current.keyCode == KeyCode.F12)
                 {
                     if (Params.timeModifier != 0)
                     {
@@ -209,7 +202,18 @@ namespace BGE
         // Update is called once per frame
         void Update()
         {
-            PrintMessage("Press F1 to toggle cam following");
+
+            if (Params.riftEnabled)
+            {
+                riftCamera.SetActive(true);
+                activeCamera = riftCamera;
+            }
+            else
+            {
+                riftCamera.SetActive(false);
+                activeCamera = riftCamera;
+            }
+            PrintMessage("Press F1 to toggle camera mode");
             PrintMessage("Press F2 to speed up");
             PrintMessage("Press F3 to slow down");
             PrintMessage("Press F4 to toggle messages");
@@ -219,6 +223,8 @@ namespace BGE
             PrintMessage("Press F8 to toggle cell space partitioning");
             PrintMessage("Press F9 to toggle non-penetration constraint");
             PrintMessage("Press F10 to toggle Rift");
+            PrintMessage("Press F11 to toggle force drawing");
+            PrintMessage("Press F12 to pause/unpause");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());
@@ -228,26 +234,32 @@ namespace BGE
             }
             GameObject ovrplayer = GameObject.FindGameObjectWithTag("ovrcamera");
             GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
-            if (camFollowing)
+            switch (Params.camMode)
             {
-                camera.transform.position = camFighter.transform.position;
-                camera.transform.rotation = camFighter.transform.rotation;
+                case((int) Params.camModes.following):
+                    currentScenario.leader.GetComponentInChildren<Renderer>().enabled = true;
+                    activeCamera.transform.position = camFighter.transform.position;
+                    activeCamera.transform.rotation = camFighter.transform.rotation;
 
-                if (ovrplayer != null)
-                {
-                    ovrplayer.transform.position = camFighter.transform.position;
-                    ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
-                }
-            }
-            else
-            {
-                if (ovrplayer != null)
-                {
-                    //ovrplayer.transform.position = camera.transform.position;
-                    //ovrplayer.GetComponent<OVRCameraController>().transform.position = camera.transform.position;
-                    //ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camera.transform.rotation);
-
-                }
+                    if (ovrplayer != null)
+                    {
+                        ovrplayer.transform.position = camFighter.transform.position;
+                        ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
+                    }
+                   break;
+                case ((int)Params.camModes.boid):
+                    currentScenario.leader.GetComponentInChildren<Renderer>().enabled = false;
+                    activeCamera.transform.position = currentScenario.leader.transform.position;
+                    activeCamera.transform.rotation = currentScenario.leader.transform.rotation;
+                    if (ovrplayer != null)
+                    {
+                        ovrplayer.transform.position = currentScenario.leader.transform.position;
+                        ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(currentScenario.leader.transform.rotation);
+                    }
+                   break;
+                case ((int)Params.camModes.fps):
+                   currentScenario.leader.GetComponentInChildren<Renderer>().enabled = true;
+                   break;
             }
 
             if (Params.cellSpacePartitioning)
@@ -268,7 +280,7 @@ namespace BGE
                 PrintMessage("Enforce non penetration constraint off");
             }
 
-            if (Params.drawDebugLines)
+            if (Params.drawDebugLines && Params.cellSpacePartitioning)
             {
                 space.Draw();
             }

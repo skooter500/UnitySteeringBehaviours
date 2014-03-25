@@ -349,6 +349,11 @@ namespace BGE
         {
             float smoothRate;
             force = Calculate();
+            if (Params.drawForces)
+            {
+                Quaternion q = Quaternion.FromToRotation(Vector3.forward, force);
+                LineDrawer.DrawArrowLine(transform.position, transform.position + force * 5.0f, Color.blue, q);
+            }
             Utilities.checkNaN(force);
             Vector3 newAcceleration = force / mass;
             if (Params.drawVectors)
@@ -739,6 +744,10 @@ namespace BGE
             {
                 if (boid != gameObject)
                 {
+                    if (drawNeighbours && Params.drawDebugLines)
+                    {
+                        LineDrawer.DrawLine(transform.position, boid.transform.position, Color.yellow);
+                    }
                     if ((transform.position - boid.transform.position).magnitude < inRange)
                     {
                         tagged.Add(boid);
@@ -798,7 +807,7 @@ namespace BGE
                         {
                             if (drawNeighbours && Params.drawDebugLines)
                             {
-                                LineDrawer.DrawCircle(neighbour.transform.position, 5, 10, Color.green);
+                                LineDrawer.DrawLine(transform.position, neighbour.transform.position, Color.yellow);
                             }
                             
                             if (Vector3.SqrMagnitude(transform.position - neighbour.transform.position) < rangeSquared)

@@ -8,7 +8,6 @@ namespace BGE
 {
     public class LineDrawer : MonoBehaviour
     {
-        public bool drawDebugLines;
         struct Line
         {
             public Vector3 start;
@@ -24,29 +23,13 @@ namespace BGE
             }
         }
 
-        static LineDrawer instance;
-
-        public static LineDrawer Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    Debug.LogError("The LineDrawer must be attached to the camera to work! Otherwise dont call LineDrawer.DrawLine");
-                }
-                return instance;
-            }            
-        }
-
         static List<Line> lines = new List<Line>();
-
 
         Material lineMaterial;
 
         // Use this for initialization
         void Start()
         {
-            instance = this;
         }
 
         // Update is called once per frame
@@ -145,6 +128,7 @@ namespace BGE
 
         void OnPostRender()
         {
+            Debug.Log("On post render called");
             CreateLineMaterial();
             // set the current material
             lineMaterial.SetPass(0);
