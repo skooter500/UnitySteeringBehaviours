@@ -226,7 +226,7 @@ namespace BGE
 
             if (FleeEnabled)
             {
-                force = Flee(leader.transform.position) * Params.GetWeight("flee_weight");
+                force = Flee(target.transform.position) * Params.GetWeight("flee_weight");
                 if (!accumulateForce(ref steeringForce, force))
                 {
                     return steeringForce;
@@ -584,11 +584,11 @@ namespace BGE
 
         Vector3 Pursue()
         {
-            Vector3 toTarget = leader.transform.position - transform.position;
+            Vector3 toTarget = target.transform.position - transform.position;
             float dist = toTarget.magnitude;
             float time = dist / maxSpeed;
 
-            Vector3 targetPos = leader.transform.position + (time * leader.GetComponent<SteeringBehaviours>().velocity);
+            Vector3 targetPos = target.transform.position + (time * target.GetComponent<SteeringBehaviours>().velocity);
             if (Params.drawDebugLines)
             {
                 LineDrawer.DrawLine(transform.position, targetPos, debugLineColour);
@@ -604,7 +604,7 @@ namespace BGE
             desiredVelocity = transform.position - targetPos;
             if (desiredVelocity.magnitude > panicDistance)
             {
-                return Vector3.zero;
+                //return Vector3.zero;
             }
             desiredVelocity.Normalize();
             desiredVelocity *= maxSpeed;

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace BGE
 {
     public class LineDrawer : MonoBehaviour
-    {
+    {        
         struct Line
         {
             public Vector3 start;
@@ -30,12 +30,6 @@ namespace BGE
         // Use this for initialization
         void Start()
         {
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
 
         void Awake()
@@ -126,20 +120,42 @@ namespace BGE
             }
         }
 
-        void OnPostRender()
+        void OnGUI()
         {
-            Debug.Log("On post render called");
+            //Debug.Log("On post render called");
             CreateLineMaterial();
             // set the current material
             lineMaterial.SetPass(0);
-            GL.Begin(GL.LINES);
-            foreach (Line line in lines)
+            //Rect r = new Rect();            
+            //switch (screenType)
+            //{
+            //    case screenTypes.fullScreen:
+            //        r = new Rect(0, 0, Screen.width, Screen.height); 
+            //        break;
+            //    case screenTypes.leftEye:
+            //        r = new Rect(0, 0, Screen.width, Screen.height); 
+            //        break;
+            //    case screenTypes.rightEye:
+            //        r = new Rect(Screen.width / 2, 0, Screen.width / 2, Screen.height); 
+            //        break;
+            //}
+            Rect[] screens = new Rect[1];
+            screens[0] = new Rect(0, 0, Screen.width, Screen.height); 
+            //screens[1] = new Rect(Screen.width / 2, 0, Screen.width / 2, Screen.height);
+
+            for (int i = 0; i < screens.Length; i++)
             {
-                GL.Color(line.color);
-                GL.Vertex3(line.start.x, line.start.y, line.start.z);
-                GL.Vertex3(line.end.x, line.end.y, line.end.z);
+                GL.Viewport(screens[i]);
+                GL.Begin(GL.LINES);
+                foreach (Line line in lines)
+                {
+                    GL.Color(line.color);
+                    GL.Vertex3(line.start.x, line.start.y, line.start.z);
+                    GL.Vertex3(line.end.x, line.end.y, line.end.z);
+                }
+                GL.End();
             }
-            GL.End();
+
             lines.Clear();
         }
     }

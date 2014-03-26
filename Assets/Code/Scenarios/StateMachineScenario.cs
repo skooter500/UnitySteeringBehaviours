@@ -19,16 +19,16 @@ namespace BGE.Scenarios
             Params.Load("default.txt");
             Vector3 aiPos = new Vector3(-20, 50, 50);
 
-            leader = CreateBoid(new Vector3(10, 50, 0), leaderPrefab);
-            leader.GetComponent<SteeringBehaviours>().ArriveEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().ObstacleAvoidanceEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().PlaneAvoidanceEnabled = true;
-            leader.GetComponent<SteeringBehaviours>().seekTargetPos = aiPos + new Vector3(0, 0, 200);
-            leader.GetComponent<SteeringBehaviours>().maxSpeed = 250;
-
             GameObject aiBoid = CreateBoid(aiPos, boidPrefab);
             aiBoid.AddComponent<StateMachine>();
             aiBoid.GetComponent<StateMachine>().SwicthState(new IdleState(aiBoid));
+
+
+            leader = CreateBoid(new Vector3(10, 50, 0), leaderPrefab);
+            leader.GetComponent<SteeringBehaviours>().maxSpeed = 350;
+            leader.AddComponent<StateMachine>();
+            leader.GetComponent<StateMachine>().SwicthState(new TeaseState(leader, aiBoid));
+
 
             CreateCamFollower(leader, new Vector3(0, 5, -10));
             

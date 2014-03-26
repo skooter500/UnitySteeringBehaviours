@@ -13,11 +13,11 @@ namespace BGE
         private static Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
         public static bool showMessages = true;
-        public static bool drawVectors = true;
+        public static bool drawVectors = false;
         public static bool drawDebugLines = false;
         public static bool cellSpacePartitioning = false;
         public static bool enforceNonPenetrationConstraint = false;
-        public static bool riftEnabled = true;
+        public static bool riftEnabled = false;
         public static bool drawForces = false;
         public static int camMode = (int) camModes.fps;
 
