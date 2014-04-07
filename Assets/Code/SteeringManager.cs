@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using BGE.Scenarios;
+using BGE.States;
 
 namespace BGE
 {
@@ -59,16 +60,7 @@ namespace BGE
             monoCamera = GameObject.FindGameObjectWithTag("MainCamera");
             riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
 
-            if (OVRDevice.SensorCount > 0)
-            {
-                riftCamera.SetActive(true);
-                activeCamera = riftCamera;
-            }
-            else
-            {
-                riftCamera.SetActive(false);
-                activeCamera = monoCamera;
-            }
+            activeCamera = monoCamera;
 
         }
 
@@ -137,6 +129,10 @@ namespace BGE
                 if (Event.current.keyCode == KeyCode.F7)
                 {
                     activeCamera.transform.up = Vector3.up;
+                    if (riftCamera != null)
+                    {
+                        riftCamera.transform.up = Vector3.up;
+                    }
                 }
                 if (Event.current.keyCode == KeyCode.F8)
                 {
@@ -203,6 +199,8 @@ namespace BGE
         void Update()
         {
 
+
+
             if (Params.riftEnabled)
             {
                 riftCamera.SetActive(true);
@@ -211,7 +209,7 @@ namespace BGE
             else
             {
                 riftCamera.SetActive(false);
-                activeCamera = riftCamera;
+                activeCamera = monoCamera;
             }
             PrintMessage("Press F1 to toggle camera mode");
             PrintMessage("Press F2 to speed up");
@@ -231,9 +229,7 @@ namespace BGE
             for (int i = 0; i < scenarios.Count; i++)
             {
                 PrintMessage("Press " + i + " for " + scenarios[i].Description());
-            }
-            GameObject ovrplayer = GameObject.FindGameObjectWithTag("ovrcamera");
-            GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
+            }            
             switch (Params.camMode)
             {
                 case((int) Params.camModes.following):
@@ -241,20 +237,19 @@ namespace BGE
                     activeCamera.transform.position = camFighter.transform.position;
                     activeCamera.transform.rotation = camFighter.transform.rotation;
 
-                    if (ovrplayer != null)
+                    if (riftCamera != null)
                     {
-                        ovrplayer.transform.position = camFighter.transform.position;
-                        ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
+
+                        riftCamera.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
                     }
                    break;
                 case ((int)Params.camModes.boid):
                     currentScenario.leader.GetComponentInChildren<Renderer>().enabled = false;
                     activeCamera.transform.position = currentScenario.leader.transform.position;
                     activeCamera.transform.rotation = currentScenario.leader.transform.rotation;
-                    if (ovrplayer != null)
+                    if (riftCamera != null)
                     {
-                        ovrplayer.transform.position = currentScenario.leader.transform.position;
-                        ovrplayer.GetComponent<OVRCameraController>().SetOrientationOffset(currentScenario.leader.transform.rotation);
+                        riftCamera.GetComponent<OVRCameraController>().SetOrientationOffset(currentScenario.leader.transform.rotation);
                     }
                    break;
                 case ((int)Params.camModes.fps):

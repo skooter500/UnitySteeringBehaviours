@@ -25,17 +25,66 @@ namespace BGE
 
         static List<Line> lines = new List<Line>();
 
+        static List<Vectrosity.VectorLine> vectrosityLines = new List<Vectrosity.VectorLine>();
+
         Material lineMaterial;
+
+        public bool useVectocity;
+
+        bool CheckForVectrocity()
+        {
+            return true;
+            //Type myType = Type.GetType("Vectrosity.VectorLine");
+            //return myType != null;
+        }
 
         // Use this for initialization
         void Start()
         {
+            useVectocity = CheckForVectrocity();
         }
 
         void Awake()
         {
             DontDestroyOnLoad(this);
         }
+
+        void LateUpdate()
+        {
+        	if (useVectocity)
+        	{
+				for (int i = 0; i < lines.Count; i++)
+				{
+					// Create a new one or... update an existing vectorcity line
+					Vectrosity.VectorLine vectrocityLine;
+					if (i > vectrosityLines.Count - 1)
+					{
+						Vector3[] points = new Vector3[2];
+						points[0] = lines[i].start;
+						points[1] = lines[i].end;
+						vectrocityLine = Vectrosity.VectorLine.SetLine3D(lines[i].color, points);
+						vectrosityLines.Add(vectrocityLine);
+					}
+					else
+					{
+						vectrocityLine = vectrosityLines[i];
+						vectrocityLine.points3[0] = lines[i].start;
+						vectrocityLine.points3[1] = lines[i].end;
+						vectrocityLine.SetColor(lines[i].color);
+					}
+					//vectrocityLine.Draw3D();
+				}
+				// Destroy any unused lines
+                while (vectrosityLines.Count > lines.Count)
+                {
+                    var myLine = vectrosityLines[vectrosityLines.Count - 1];
+                    Vectrosity.VectorLine.Destroy(ref myLine);
+                    vectrosityLines.RemoveAt(vectrosityLines.Count - 1);
+                }
+			}
+        }
+        
+        
 
         public static void DrawLine(Vector3 start, Vector3 end, Color colour)
         {
@@ -120,42 +169,49 @@ namespace BGE
             }
         }
 
-        void OnGUI()
+        void OnPostRender()
         {
-            //Debug.Log("On post render called");
-            CreateLineMaterial();
-            // set the current material
-            lineMaterial.SetPass(0);
-            //Rect r = new Rect();            
-            //switch (screenType)
-            //{
-            //    case screenTypes.fullScreen:
-            //        r = new Rect(0, 0, Screen.width, Screen.height); 
-            //        break;
-            //    case screenTypes.leftEye:
-            //        r = new Rect(0, 0, Screen.width, Screen.height); 
-            //        break;
-            //    case screenTypes.rightEye:
-            //        r = new Rect(Screen.width / 2, 0, Screen.width / 2, Screen.height); 
-            //        break;
-            //}
-            Rect[] screens = new Rect[1];
-            screens[0] = new Rect(0, 0, Screen.width, Screen.height); 
-            //screens[1] = new Rect(Screen.width / 2, 0, Screen.width / 2, Screen.height);
-
-            for (int i = 0; i < screens.Length; i++)
+            if (!useVectocity)
             {
-                GL.Viewport(screens[i]);
-                GL.Begin(GL.LINES);
-                foreach (Line line in lines)
-                {
-                    GL.Color(line.color);
-                    GL.Vertex3(line.start.x, line.start.y, line.start.z);
-                    GL.Vertex3(line.end.x, line.end.y, line.end.z);
-                }
-                GL.End();
-            }
+                CreateLineMaterial();
+                // set the current material
+                lineMaterial.SetPass(0);
+                Rect[] eyes;
 
+                if (Params.riftEnabled)
+                {
+                    eyes = new Rect[2];
+                    eyes[0] = new Rect(0, 0, Screen.width / 2, Screen.height);
+                    eyes[1] = new Rect(Screen.width / 2, 0, Screen.width / 2, Screen.height);
+                }
+                else
+                {
+                    eyes = new Rect[1];
+                    eyes[0] = new Rect(0, 0, Screen.width, Screen.height);
+                }
+
+                for (int i = 0; i < eyes.Length; i++)
+                {
+                    if (Params.riftEnabled)
+                    {
+                        GameObject ovrCameraController = (GameObject)GameObject.FindGameObjectWithTag("ovrcamera");
+                        Camera[] cameras = (Camera[])ovrCameraController.GetComponentsInChildren<Camera>();
+                        SteeringManager.PrintVector("Cam " + i, cameras[i].transform.position);
+                        GL.modelview = cameras[i].worldToCameraMatrix;
+                        GL.LoadProjectionMatrix(cameras[i].projectionMatrix);
+                    }
+
+                    GL.Viewport(eyes[i]);
+                    GL.Begin(GL.LINES);
+                    foreach (Line line in lines)
+                    {
+                        GL.Color(line.color);
+                        GL.Vertex3(line.start.x, line.start.y, line.start.z);
+                        GL.Vertex3(line.end.x, line.end.y, line.end.z);
+                    }
+                    GL.End();
+                }
+            }
             lines.Clear();
         }
     }

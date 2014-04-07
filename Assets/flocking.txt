@@ -1,4 +1,4 @@
-world_range = 200
+world_range = 300
 steering_weight_tweaker = 200
 alignment_weight = 1
 wander_radius = 1.2
@@ -24,5 +24,5 @@ hide_weight = 1
 evade_weight = 0.01
 follow_path_weight = 1
 random_walk_weight = 1
-num_boids = 50
-cell_width = 100
+num_boids = 200
+cell_width = 40

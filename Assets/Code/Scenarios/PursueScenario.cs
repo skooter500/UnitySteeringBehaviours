@@ -21,7 +21,7 @@ namespace BGE.Scenarios
 
             GameObject boid = CreateBoid(new Vector3(25, 5, 50), boidPrefab);
             boid.GetComponent<SteeringBehaviours>().PursuitEnabled = true;
-            boid.GetComponent<SteeringBehaviours>().leader = leader;
+            boid.GetComponent<SteeringBehaviours>().target = leader;
 
             CreateCamFollower(boid, new Vector3(0, 5, -10));
 

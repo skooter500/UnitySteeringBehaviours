@@ -111,7 +111,7 @@ namespace BGE
                 }
             }
 
-            SteeringManager.Instance.space = new Space();
+            //SteeringManager.Instance.space = new Space();
 
             timeModifier = 1.0f;
         }
