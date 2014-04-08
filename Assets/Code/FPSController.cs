@@ -46,12 +46,30 @@ namespace BGE
 
         void Walk(float units)
         {
-            transform.position += transform.forward * units;
+            if (Params.riftEnabled)
+            {
+                GameObject riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
+                Camera camera = riftCamera.GetComponentInChildren<Camera>();
+                transform.position += camera.transform.forward * units;
+            }
+            else
+            {
+                transform.position += transform.forward * units;
+            }
         }
 
         void Strafe(float units)
         {
-            transform.position += transform.right * units;
+            if (Params.riftEnabled)
+            {
+                GameObject riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
+                Camera camera = riftCamera.GetComponentInChildren<Camera>();
+                transform.position += camera.transform.right * units;
+            }
+            else
+            {
+                transform.position += transform.right * units;
+            }
         }
 
         // Update is called once per frame
@@ -115,10 +133,7 @@ namespace BGE
                 Pitch(-mouseY);
                 Pitch(contPitch);
             }
-            else
-            {
 
-            }
             float contWalk = Input.GetAxis("Walk Axis");
             float contStrafe = Input.GetAxis("Strafe Axis");
             Walk(-contWalk * speed * Time.deltaTime);

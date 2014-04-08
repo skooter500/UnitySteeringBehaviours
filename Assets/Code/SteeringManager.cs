@@ -236,7 +236,6 @@ namespace BGE
 
                     if (riftCamera != null)
                     {
-
                         riftCamera.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
                     }
                    break;
