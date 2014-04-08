@@ -31,17 +31,9 @@ namespace BGE
 
         public bool useVectocity;
 
-        bool CheckForVectrocity()
-        {
-            return true;
-            //Type myType = Type.GetType("Vectrosity.VectorLine");
-            //return myType != null;
-        }
-
         // Use this for initialization
         void Start()
-        {
-            useVectocity = CheckForVectrocity();
+        {            
         }
 
         void Awake()
@@ -50,59 +42,54 @@ namespace BGE
         }
 
         void LateUpdate()
-        {                    
-        	if (useVectocity)
-        	{
-                Camera[] cameras;
-                if (Params.riftEnabled)
-                {
-                    GameObject ovrCameraController = (GameObject)GameObject.FindGameObjectWithTag("ovrcamera");
-                    cameras = (Camera[])ovrCameraController.GetComponentsInChildren<Camera>();            
-                }
-                else
-                {
-                    cameras = new Camera[1];
-                    cameras[0] = GameObject.FindObjectOfType<Camera>();
-                }
+        {
+            Camera[] cameras;
+            if (Params.riftEnabled)
+            {
+                GameObject ovrCameraController = (GameObject)GameObject.FindGameObjectWithTag("ovrcamera");
+                cameras = (Camera[])ovrCameraController.GetComponentsInChildren<Camera>();            
+            }
+            else
+            {
+                cameras = new Camera[1];
+                cameras[0] = GameObject.FindObjectOfType<Camera>();
+            }
 
-                for (int j = 0 ; j < cameras.Length ; j ++)
-                {
-                    Vectrosity.VectorLine.SetCamera3D(cameras[j]);					
-				    for (int i = 0; i < lines.Count; i++)
-				    {
-					    // Create a new one or... update an existing vectorcity line
-					    Vectrosity.VectorLine vectrocityLine;
-					    if (i > vectrosityLines.Count - 1)
-					    {
-						    Vector3[] points = new Vector3[2];
-						    points[0] = lines[i].start;
-						    points[1] = lines[i].end;
-						    vectrocityLine = Vectrosity.VectorLine.SetLine3D(lines[i].color, points);
-                            vectrocityLine.SetColor(lines[i].color);
-                            vectrocityLine.SetWidth(1, 0);
-						    vectrosityLines.Add(vectrocityLine);
-					    }
-					    else
-					    {
-						    vectrocityLine = vectrosityLines[i];
-						    vectrocityLine.points3[0] = lines[i].start;
-						    vectrocityLine.points3[1] = lines[i].end;
-						    vectrocityLine.SetColor(lines[i].color);
-                            vectrocityLine.SetWidth(1, 0);
-					    }
-                    }
+            for (int j = 0 ; j < cameras.Length ; j ++)
+            {
+                Vectrosity.VectorLine.SetCamera3D(cameras[j]);					
+				for (int i = 0; i < lines.Count; i++)
+				{
+					// Create a new one or... update an existing vectorcity line
+					Vectrosity.VectorLine vectrocityLine;
+					if (i > vectrosityLines.Count - 1)
+					{
+						Vector3[] points = new Vector3[2];
+						points[0] = lines[i].start;
+						points[1] = lines[i].end;
+						vectrocityLine = Vectrosity.VectorLine.SetLine3D(lines[i].color, points);
+                        vectrocityLine.SetColor(lines[i].color);
+                        vectrocityLine.SetWidth(1, 0);
+						vectrosityLines.Add(vectrocityLine);
+					}
+					else
+					{
+						vectrocityLine = vectrosityLines[i];
+						vectrocityLine.points3[0] = lines[i].start;
+						vectrocityLine.points3[1] = lines[i].end;
+						vectrocityLine.SetColor(lines[i].color);
+                        vectrocityLine.SetWidth(1, 0);
+					}
                 }
-				// Destroy any unused lines
-                while (vectrosityLines.Count > lines.Count)
-                {
-                    var myLine = vectrosityLines[vectrosityLines.Count - 1];
-                    Vectrosity.VectorLine.Destroy(ref myLine);
-                    vectrosityLines.RemoveAt(vectrosityLines.Count - 1);
-                }
-			}
-        }
-        
-        
+            }
+			// Destroy any unused lines
+            while (vectrosityLines.Count > lines.Count)
+            {
+                var myLine = vectrosityLines[vectrosityLines.Count - 1];
+                Vectrosity.VectorLine.Destroy(ref myLine);
+                vectrosityLines.RemoveAt(vectrosityLines.Count - 1);
+            }
+		}
 
         public static void DrawLine(Vector3 start, Vector3 end, Color colour)
         {
@@ -189,47 +176,57 @@ namespace BGE
 
         void OnPostRender()
         {
-            if (!useVectocity)
+            // This technique wont work with multiple cameras
+            // We have to use Vectrosity if we have multiple cameras
+            if (!Params.riftEnabled)
             {
                 CreateLineMaterial();
                 // set the current material
                 lineMaterial.SetPass(0);
-                Rect[] eyes;
+                GL.Begin(GL.LINES);
+                foreach (Line line in lines)
+                {
+                    GL.Color(line.color);
+                    GL.Vertex3(line.start.x, line.start.y, line.start.z);
+                    GL.Vertex3(line.end.x, line.end.y, line.end.z);
+                }
+                GL.End();
 
+                /*
+                Rect[] viewports;
+
+                Camera[] cameras = null;
                 if (Params.riftEnabled)
                 {
-                    eyes = new Rect[2];
-                    eyes[0] = new Rect(0, 0, Screen.width / 2, Screen.height);
-                    eyes[1] = new Rect(Screen.width / 2, 0, Screen.width / 2, Screen.height);
+                    viewports = new Rect[2];
+                    viewports[0] = new Rect(0, 0, Screen.width / 2, Screen.height);
+                    viewports[1] = viewports[0]; // new Rect(Screen.width / 2, 0, Screen.width / 2, Screen.height);
+                    GameObject ovrCameraController = (GameObject)GameObject.FindGameObjectWithTag("ovrcamera");
+                    cameras = (Camera[])ovrCameraController.GetComponentsInChildren<Camera>();
+                    
                 }
                 else
                 {
-                    eyes = new Rect[1];
-                    eyes[0] = new Rect(0, 0, Screen.width, Screen.height);
+                    viewports = new Rect[1];
+                    viewports[0] = new Rect(0, 0, Screen.width, Screen.height);
+                    cameras = new Camera[1];
+                    cameras[0] = GameObject.FindObjectOfType<Camera>();
                 }
 
-                for (int i = 0; i < eyes.Length; i++)
+                for (int i = 0; i < viewports.Length; i++)
                 {
-                    if (Params.riftEnabled)
-                    {
-                        GameObject ovrCameraController = (GameObject)GameObject.FindGameObjectWithTag("ovrcamera");
-                        Camera[] cameras = (Camera[])ovrCameraController.GetComponentsInChildren<Camera>();
-                        SteeringManager.PrintVector("Cam " + i, cameras[i].transform.position);
-                        GL.modelview = cameras[i].worldToCameraMatrix;
-                        GL.LoadProjectionMatrix(cameras[i].projectionMatrix);
-                    }
-
-                    GL.Viewport(eyes[i]);
-                    GL.Begin(GL.LINES);
-                    foreach (Line line in lines)
-                    {
-                        GL.Color(line.color);
-                        GL.Vertex3(line.start.x, line.start.y, line.start.z);
-                        GL.Vertex3(line.end.x, line.end.y, line.end.z);
-                    }
-                    GL.End();
+                    SteeringManager.PrintVector("Cam " + i, cameras[i].transform.position);
+                    GL.PushMatrix();
+                    lineMaterial.SetPass(0);                                        
+                    GL.modelview = cameras[i].worldToCameraMatrix;
+                    GL.LoadProjectionMatrix(cameras[i].projectionMatrix);
+                    GL.Viewport(viewports[i]);
+                   
+                    GL.PopMatrix();
                 }
+                 */
             }
+            
             lines.Clear();
         }
     }

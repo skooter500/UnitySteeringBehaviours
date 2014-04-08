@@ -9,7 +9,7 @@ namespace BGE
     {
 
         float speed = 10.0f;
-        float mouseX, mouseY;
+        
         // Use this for initialization
         void Start()
         {
@@ -44,9 +44,20 @@ namespace BGE
             transform.rotation = rot * transform.rotation;
         }
 
+        void Walk(float units)
+        {
+            transform.position += transform.forward * units;
+        }
+
+        void Strafe(float units)
+        {
+            transform.position += transform.right * units;
+        }
+
         // Update is called once per frame
         void Update()
         {
+            float mouseX, mouseY;
             float speed = this.speed;
 
             if (Input.GetKey(KeyCode.LeftShift))
@@ -56,22 +67,22 @@ namespace BGE
 
             if (Input.GetKey(KeyCode.W))
             {
-                transform.position += gameObject.transform.forward * Time.deltaTime * speed;
+                Walk(Time.deltaTime * speed);
             }
 
             if (Input.GetKey(KeyCode.S))
             {
-                transform.position -= gameObject.transform.forward * Time.deltaTime * speed;
+                Walk(- Time.deltaTime * speed);
             }
 
             if (Input.GetKey(KeyCode.A))
             {
-                transform.position -= gameObject.transform.right * Time.deltaTime * speed;
+                Strafe(- Time.deltaTime * speed);
             }
 
             if (Input.GetKey(KeyCode.D))
             {
-                transform.position += gameObject.transform.right * Time.deltaTime * speed;
+                Strafe(Time.deltaTime * speed);
             }
             if (Input.GetKey(KeyCode.Q))
             {
@@ -82,8 +93,7 @@ namespace BGE
                 Roll(Time.deltaTime * speed);
             }
 
-            SteeringManager.PrintVector("Cam pos: ", transform.position);
-            SteeringManager.PrintVector("Cam forward: ", transform.forward);
+            
 
             mouseX = Input.GetAxis("Mouse X");
             mouseY = Input.GetAxis("Mouse Y");
@@ -95,7 +105,27 @@ namespace BGE
             }
             
             Yaw(mouseX);
-            Pitch(-mouseY);
+            float contYaw = Input.GetAxis("Yaw Axis");
+            float contPitch = Input.GetAxis("Pitch Axis");
+            Yaw(contYaw);
+
+            // If in Rift mode, dont pitch
+            if (!Params.riftEnabled)
+            {
+                Pitch(-mouseY);
+                Pitch(contPitch);
+            }
+            else
+            {
+
+            }
+            float contWalk = Input.GetAxis("Walk Axis");
+            float contStrafe = Input.GetAxis("Strafe Axis");
+            Walk(-contWalk * speed * Time.deltaTime);
+            Strafe(contStrafe * speed * Time.deltaTime);
+            
+            SteeringManager.PrintVector("Cam pos: ", transform.position);
+            SteeringManager.PrintVector("Cam forward: ", transform.forward);
         }
     }
 }

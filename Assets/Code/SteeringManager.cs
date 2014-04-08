@@ -198,9 +198,6 @@ namespace BGE
         // Update is called once per frame
         void Update()
         {
-
-
-
             if (Params.riftEnabled)
             {
                 riftCamera.SetActive(true);
