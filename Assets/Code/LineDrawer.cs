@@ -50,30 +50,48 @@ namespace BGE
         }
 
         void LateUpdate()
-        {
+        {                    
         	if (useVectocity)
         	{
-				for (int i = 0; i < lines.Count; i++)
-				{
-					// Create a new one or... update an existing vectorcity line
-					Vectrosity.VectorLine vectrocityLine;
-					if (i > vectrosityLines.Count - 1)
-					{
-						Vector3[] points = new Vector3[2];
-						points[0] = lines[i].start;
-						points[1] = lines[i].end;
-						vectrocityLine = Vectrosity.VectorLine.SetLine3D(lines[i].color, points);
-						vectrosityLines.Add(vectrocityLine);
-					}
-					else
-					{
-						vectrocityLine = vectrosityLines[i];
-						vectrocityLine.points3[0] = lines[i].start;
-						vectrocityLine.points3[1] = lines[i].end;
-						vectrocityLine.SetColor(lines[i].color);
-					}
-					//vectrocityLine.Draw3D();
-				}
+                Camera[] cameras;
+                if (Params.riftEnabled)
+                {
+                    GameObject ovrCameraController = (GameObject)GameObject.FindGameObjectWithTag("ovrcamera");
+                    cameras = (Camera[])ovrCameraController.GetComponentsInChildren<Camera>();            
+                }
+                else
+                {
+                    cameras = new Camera[1];
+                    cameras[0] = GameObject.FindObjectOfType<Camera>();
+                }
+
+                for (int j = 0 ; j < cameras.Length ; j ++)
+                {
+                    Vectrosity.VectorLine.SetCamera3D(cameras[j]);					
+				    for (int i = 0; i < lines.Count; i++)
+				    {
+					    // Create a new one or... update an existing vectorcity line
+					    Vectrosity.VectorLine vectrocityLine;
+					    if (i > vectrosityLines.Count - 1)
+					    {
+						    Vector3[] points = new Vector3[2];
+						    points[0] = lines[i].start;
+						    points[1] = lines[i].end;
+						    vectrocityLine = Vectrosity.VectorLine.SetLine3D(lines[i].color, points);
+                            vectrocityLine.SetColor(lines[i].color);
+                            vectrocityLine.SetWidth(1, 0);
+						    vectrosityLines.Add(vectrocityLine);
+					    }
+					    else
+					    {
+						    vectrocityLine = vectrosityLines[i];
+						    vectrocityLine.points3[0] = lines[i].start;
+						    vectrocityLine.points3[1] = lines[i].end;
+						    vectrocityLine.SetColor(lines[i].color);
+                            vectrocityLine.SetWidth(1, 0);
+					    }
+                    }
+                }
 				// Destroy any unused lines
                 while (vectrosityLines.Count > lines.Count)
                 {
