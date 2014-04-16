@@ -9,7 +9,7 @@ namespace BGE
 {
     public class PathFinder
     {
-        float dist = 5.0f;
+        float voxelSize = 5.0f;
         public string message = "";
             
         public PathFinder()
@@ -43,12 +43,12 @@ namespace BGE
             set { smooth = value; }
         }
 
-        Vector3 RoundToNodeDist(Vector3 v)
+        Vector3 PositionToVoxel(Vector3 v)
         {
             Vector3 ret = new Vector3();
-            ret.x = ((int)(v.x / dist)) * dist;
-            ret.y = ((int)(v.y / dist)) * dist;
-            ret.z = ((int)(v.z / dist)) * dist;
+            ret.x = ((int)(v.x / voxelSize)) * voxelSize;
+            ret.y = ((int)(v.y / voxelSize)) * voxelSize;
+            ret.z = ((int)(v.z / voxelSize)) * voxelSize;
             return ret;
         }
 
@@ -56,8 +56,8 @@ namespace BGE
         {
             long oldNow = DateTime.Now.Ticks;
             bool found = false;
-            this.end = RoundToNodeDist(start);
-            this.start = RoundToNodeDist(end);
+            this.end = PositionToVoxel(start); // end refers to start
+            this.start = PositionToVoxel(end); // start refers to end
 
             open.Clear();
             closed.Clear();
@@ -146,148 +146,148 @@ namespace BGE
             Vector3 pos;
             pos.x = current.pos.x;
             pos.y = current.pos.y;
-            pos.z = current.pos.z + dist;
+            pos.z = current.pos.z + voxelSize;
             AddIfValid(pos, current);
 
             // Forwards right
-            pos.x = current.pos.x + dist;
+            pos.x = current.pos.x + voxelSize;
             pos.y = current.pos.y;
-            pos.z = current.pos.z + dist;
+            pos.z = current.pos.z + voxelSize;
             AddIfValid(pos, current);
 
             // Right
-            pos.x = current.pos.x + dist;
+            pos.x = current.pos.x + voxelSize;
             pos.y = current.pos.y;
             pos.z = current.pos.z;
             AddIfValid(pos, current);
 
             // Backwards Right
-            pos.x = current.pos.x + dist;
+            pos.x = current.pos.x + voxelSize;
             pos.y = current.pos.y;
-            pos.z = current.pos.z - dist;
+            pos.z = current.pos.z - voxelSize;
             AddIfValid(pos, current);
 
             // Backwards
             pos.x = current.pos.x;
             pos.y = current.pos.y;
-            pos.z = current.pos.z - dist;
+            pos.z = current.pos.z - voxelSize;
             AddIfValid(pos, current);
 
             // Backwards Left
-            pos.x = current.pos.x - dist;
+            pos.x = current.pos.x - voxelSize;
             pos.y = current.pos.y;
-            pos.z = current.pos.z - dist;
+            pos.z = current.pos.z - voxelSize;
             AddIfValid(pos, current);
 
             // Left
-            pos.x = current.pos.x - dist;
+            pos.x = current.pos.x - voxelSize;
             pos.y = current.pos.y;
             pos.z = current.pos.z;
             AddIfValid(pos, current);
 
             // Forwards Left
-            pos.x = current.pos.x - dist;
+            pos.x = current.pos.x - voxelSize;
             pos.y = current.pos.y;
-            pos.z = current.pos.z + dist;
+            pos.z = current.pos.z + voxelSize;
             AddIfValid(pos, current);
 
             if (isThreeD)
             {
                 // Above in front row
-                pos.x = current.pos.x - dist;
-                pos.y = current.pos.y + dist;
-                pos.z = current.pos.z - dist;
+                pos.x = current.pos.x - voxelSize;
+                pos.y = current.pos.y + voxelSize;
+                pos.z = current.pos.z - voxelSize;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y + dist;
-                pos.z = current.pos.z - dist;
+                pos.y = current.pos.y + voxelSize;
+                pos.z = current.pos.z - voxelSize;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + dist;
-                pos.y = current.pos.y + dist;
-                pos.z = current.pos.z - dist;
+                pos.x = current.pos.x + voxelSize;
+                pos.y = current.pos.y + voxelSize;
+                pos.z = current.pos.z - voxelSize;
                 AddIfValid(pos, current);
 
                 
                 // Above middle row
-                pos.x = current.pos.x - dist;
-                pos.y = current.pos.y + dist;
+                pos.x = current.pos.x - voxelSize;
+                pos.y = current.pos.y + voxelSize;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y + dist;
+                pos.y = current.pos.y + voxelSize;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + dist;
-                pos.y = current.pos.y + dist;
+                pos.x = current.pos.x + voxelSize;
+                pos.y = current.pos.y + voxelSize;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 // Above back row
-                pos.x = current.pos.x - dist;
-                pos.y = current.pos.y + dist;
-                pos.z = current.pos.z + dist;
+                pos.x = current.pos.x - voxelSize;
+                pos.y = current.pos.y + voxelSize;
+                pos.z = current.pos.z + voxelSize;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y + dist;
-                pos.z = current.pos.z + dist;
+                pos.y = current.pos.y + voxelSize;
+                pos.z = current.pos.z + voxelSize;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + dist;
-                pos.y = current.pos.y + dist;
-                pos.z = current.pos.z + dist;
+                pos.x = current.pos.x + voxelSize;
+                pos.y = current.pos.y + voxelSize;
+                pos.z = current.pos.z + voxelSize;
                 AddIfValid(pos, current);
 
                 // Below in front row
-                pos.x = current.pos.x - dist;
-                pos.y = current.pos.y - dist;
-                pos.z = current.pos.z - dist;
+                pos.x = current.pos.x - voxelSize;
+                pos.y = current.pos.y - voxelSize;
+                pos.z = current.pos.z - voxelSize;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y - dist;
-                pos.z = current.pos.z - dist;
+                pos.y = current.pos.y - voxelSize;
+                pos.z = current.pos.z - voxelSize;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + dist;
-                pos.y = current.pos.y - dist;
-                pos.z = current.pos.z - dist;
+                pos.x = current.pos.x + voxelSize;
+                pos.y = current.pos.y - voxelSize;
+                pos.z = current.pos.z - voxelSize;
                 AddIfValid(pos, current);
 
                 // Below middle row
-                pos.x = current.pos.x - dist;
-                pos.y = current.pos.y - dist;
+                pos.x = current.pos.x - voxelSize;
+                pos.y = current.pos.y - voxelSize;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y - dist;
+                pos.y = current.pos.y - voxelSize;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + dist;
-                pos.y = current.pos.y - dist;
+                pos.x = current.pos.x + voxelSize;
+                pos.y = current.pos.y - voxelSize;
                 pos.z = current.pos.z;
                 AddIfValid(pos, current);
 
                 // Below back row
-                pos.x = current.pos.x - dist;
-                pos.y = current.pos.y - dist;
-                pos.z = current.pos.z + dist;
+                pos.x = current.pos.x - voxelSize;
+                pos.y = current.pos.y - voxelSize;
+                pos.z = current.pos.z + voxelSize;
                 AddIfValid(pos, current);
 
                 pos.x = current.pos.x;
-                pos.y = current.pos.y - dist;
-                pos.z = current.pos.z + dist;
+                pos.y = current.pos.y - voxelSize;
+                pos.z = current.pos.z + voxelSize;
                 AddIfValid(pos, current);
 
-                pos.x = current.pos.x + dist;
-                pos.y = current.pos.y - dist;
-                pos.z = current.pos.z + dist;
+                pos.x = current.pos.x + voxelSize;
+                pos.y = current.pos.y - voxelSize;
+                pos.z = current.pos.z + voxelSize;
                 AddIfValid(pos, current);
                  
             }

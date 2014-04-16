@@ -48,11 +48,9 @@ namespace BGE
         {
             if (Params.riftEnabled)
             {
-                GameObject riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
-                Camera camera = riftCamera.GetComponentInChildren<Camera>();
-                transform.position += camera.transform.forward * units;
+                transform.position += GameObject.FindGameObjectWithTag("rightcamera").transform.forward * units;
             }
-            else
+            else 
             {
                 transform.position += transform.forward * units;
             }
@@ -62,9 +60,7 @@ namespace BGE
         {
             if (Params.riftEnabled)
             {
-                GameObject riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
-                Camera camera = riftCamera.GetComponentInChildren<Camera>();
-                transform.position += camera.transform.right * units;
+                transform.position += GameObject.FindGameObjectWithTag("rightcamera").transform.right * units;
             }
             else
             {
@@ -78,7 +74,9 @@ namespace BGE
             float mouseX, mouseY;
             float speed = this.speed;
 
-            if (Input.GetKey(KeyCode.LeftShift))
+            float runAxis = Input.GetAxis("Run Axis");
+
+            if (Input.GetKey(KeyCode.LeftShift) || runAxis != 0)
             {
                 speed *= 10.0f;
             }

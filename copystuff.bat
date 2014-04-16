@@ -1,0 +1,1 @@
+copy Assets\*.txt ..\Build\Steering_Data\*.txt

@@ -96,10 +96,22 @@ namespace BGE
                     {
                         currentScenario.TearDown();
                         currentScenario = scenarios[i];
-                        currentScenario.Start();
+                        currentScenario.Start();                        
                     }
                 }
 
+                if (Event.current.keyCode == KeyCode.R)
+                {
+                    currentScenario.TearDown();
+                    currentScenario = scenarios[6];
+                    currentScenario.Start();
+                    Params.showMessages = false;
+                    Params.riftEnabled = true;
+                    Params.timeModifier = 0.3f;
+                    Params.cellSpacePartitioning = true;
+                    Params.drawDebugLines = true;
+                    Params.camMode = (int) Params.camModes.boid;
+                }
                 float timeModRate = 0.1f;
                 if (Event.current.keyCode == KeyCode.F2)
                 {
@@ -128,11 +140,7 @@ namespace BGE
 
                 if (Event.current.keyCode == KeyCode.F7)
                 {
-                    activeCamera.transform.up = Vector3.up;
-                    if (riftCamera != null)
-                    {
-                        riftCamera.transform.up = Vector3.up;
-                    }
+                    monoCamera.transform.up = Vector3.up;
                 }
                 if (Event.current.keyCode == KeyCode.F8)
                 {
@@ -198,6 +206,26 @@ namespace BGE
         // Update is called once per frame
         void Update()
         {
+
+            if (Input.GetButtonDown("A Button"))
+            {
+                    Params.camMode = (Params.camMode + 1) % 3;
+            }
+            if (Input.GetButtonDown("B Button"))
+            {
+                Params.cellSpacePartitioning = !Params.cellSpacePartitioning;
+            }
+            if (Input.GetButtonDown("Y Button"))
+            {
+                if (Params.timeModifier != 0)
+                {
+                    Params.timeModifier = 0.0f;
+                }
+                else
+                {
+                    Params.timeModifier = 1.0f;
+                }
+            }
             if (Params.riftEnabled)
             {
                 riftCamera.SetActive(true);
@@ -226,26 +254,24 @@ namespace BGE
             for (int i = 0; i < scenarios.Count; i++)
             {
                 PrintMessage("Press " + i + " for " + scenarios[i].Description());
-            }            
+            }
+           
             switch (Params.camMode)
             {
                 case((int) Params.camModes.following):
                     currentScenario.leader.GetComponentInChildren<Renderer>().enabled = true;
-                    activeCamera.transform.position = camFighter.transform.position;
-                    activeCamera.transform.rotation = camFighter.transform.rotation;
-
-                    if (riftCamera != null)
+                    monoCamera.transform.position = camFighter.transform.position;
+                    if (!Params.riftEnabled)
                     {
-                        riftCamera.GetComponent<OVRCameraController>().SetOrientationOffset(camFighter.transform.rotation);
+                        monoCamera.transform.rotation = camFighter.transform.rotation;
                     }
                    break;
                 case ((int)Params.camModes.boid):
                     currentScenario.leader.GetComponentInChildren<Renderer>().enabled = false;
-                    activeCamera.transform.position = currentScenario.leader.transform.position;
-                    activeCamera.transform.rotation = currentScenario.leader.transform.rotation;
-                    if (riftCamera != null)
+                    monoCamera.transform.position = currentScenario.leader.transform.position;
+                    if (!Params.riftEnabled)
                     {
-                        riftCamera.GetComponent<OVRCameraController>().SetOrientationOffset(currentScenario.leader.transform.rotation);
+                        monoCamera.transform.rotation = currentScenario.leader.transform.rotation;
                     }
                    break;
                 case ((int)Params.camModes.fps):
