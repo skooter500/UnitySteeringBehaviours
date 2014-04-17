@@ -23,6 +23,8 @@ namespace BGE
         // Use this for initialization
         GUIStyle style = new GUIStyle();
 
+        float[] timeModifiers = { 0.2f, 0.5f, 1.0f, 0.0f };
+        int timeModIndex = 2;
         
         GameObject monoCamera;
         GameObject activeCamera;
@@ -105,22 +107,16 @@ namespace BGE
                     currentScenario.Start();
                     Params.showMessages = false;
                     Params.riftEnabled = true;
-                    Params.timeModifier = 0.2f;
+                    timeModIndex = 0;
                     Params.cellSpacePartitioning = true;
                     Params.drawDebugLines = true;
                     Params.camMode = (int) Params.camModes.boid;
                 }
-                float timeModRate = 0.1f;
+
                 if (Event.current.keyCode == KeyCode.F2)
                 {
-                    Params.timeModifier += Time.deltaTime * timeModRate;
+                    timeModIndex = (timeModIndex + 1) % timeModifiers.Length;
                 }
-
-                if (Event.current.keyCode == KeyCode.F3)
-                {
-                    Params.timeModifier -= Time.deltaTime * timeModRate;
-                }
-
                 if (Event.current.keyCode == KeyCode.F4)
                 {
                     Params.showMessages = !Params.showMessages;
@@ -156,20 +152,7 @@ namespace BGE
                 if (Event.current.keyCode == KeyCode.F11)
                 {
                     Params.drawForces = !Params.drawForces;
-                }                
-
-                if (Event.current.keyCode == KeyCode.F12)
-                {
-                    if (Params.timeModifier != 0)
-                    {
-                        Params.timeModifier = 0.0f;
-                    }
-                    else
-                    {
-                        Params.timeModifier = 1.0f;
-                    }
-                }
-                
+                }                                
                 if (Event.current.keyCode == KeyCode.Escape)
                 {
                     Application.Quit();
@@ -204,10 +187,14 @@ namespace BGE
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetButtonDown("X Button"))
+            {
+                Params.drawDebugLines = false;
+            }
 
             if (Input.GetButtonDown("A Button"))
             {
-                    Params.camMode = (Params.camMode + 1) % 3;
+                Params.camMode = (Params.camMode + 1) % 3;
             }
             if (Input.GetButtonDown("B Button"))
             {
@@ -215,15 +202,10 @@ namespace BGE
             }
             if (Input.GetButtonDown("Y Button"))
             {
-                if (Params.timeModifier != 0)
-                {
-                    Params.timeModifier = 0.0f;
-                }
-                else
-                {
-                    Params.timeModifier = 1.0f;
-                }
+                timeModIndex = (timeModIndex + 1) % timeModifiers.Length;                
+                
             }
+            Params.timeModifier = timeModifiers[timeModIndex];
             if (Params.riftEnabled)
             {
                 riftCamera.SetActive(true);
@@ -235,8 +217,7 @@ namespace BGE
                 activeCamera = monoCamera;
             }
             PrintMessage("Press F1 to toggle camera mode");
-            PrintMessage("Press F2 to speed up");
-            PrintMessage("Press F3 to slow down");
+            PrintMessage("Press F2 to adjust speed");
             PrintMessage("Press F4 to toggle messages");
             PrintMessage("Press F5 to toggle vector drawing");
             PrintMessage("Press F6 to toggle debug drawing");
@@ -245,7 +226,6 @@ namespace BGE
             PrintMessage("Press F9 to toggle non-penetration constraint");
             PrintMessage("Press F10 to toggle Rift");
             PrintMessage("Press F11 to toggle force drawing");
-            PrintMessage("Press F12 to pause/unpause");
             int fps = (int)(1.0f / Time.deltaTime);
             PrintFloat("FPS: ", fps);
             PrintMessage("Current scenario: " + currentScenario.Description());
