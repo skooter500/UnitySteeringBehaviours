@@ -21,6 +21,10 @@ namespace BGE.Scenarios
 
             GameObject aiBoid = CreateBoid(aiPos, boidPrefab);
             aiBoid.AddComponent<StateMachine>();
+            AudioSource audio = aiBoid.AddComponent<AudioSource>();
+            AudioClip clip = Resources.Load<AudioClip>("Audio/lazer");
+            audio.loop = false;
+            audio.clip = clip;            
             aiBoid.GetComponent<StateMachine>().SwicthState(new IdleState(aiBoid));
 
 

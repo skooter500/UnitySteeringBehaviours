@@ -7,8 +7,6 @@ using BGE.States;
 
 namespace BGE
 {
-    
-
     public class SteeringManager : MonoBehaviour
     {
         List<Scenario> scenarios = new List<Scenario>();
@@ -107,7 +105,7 @@ namespace BGE
                     currentScenario.Start();
                     Params.showMessages = false;
                     Params.riftEnabled = true;
-                    Params.timeModifier = 0.3f;
+                    Params.timeModifier = 0.2f;
                     Params.cellSpacePartitioning = true;
                     Params.drawDebugLines = true;
                     Params.camMode = (int) Params.camModes.boid;

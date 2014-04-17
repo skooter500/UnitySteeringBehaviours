@@ -50,13 +50,14 @@ namespace BGE.States
                 angle = (float) Math.Acos(Vector3.Dot(toEnemy, entity.transform.forward));
                 if (angle < fov)
                 {
-                    if (timeShot > 0.25f)
+                    if (timeShot > 0.5f)
                     {
                         GameObject lazer = new GameObject();
                         lazer.AddComponent<Lazer>();
                         lazer.transform.position = entity.transform.position;
                         lazer.transform.forward = entity.transform.forward;
                         timeShot = 0.0f;
+                        entity.GetComponent<AudioSource>().Play();
                     }
                 }
             }

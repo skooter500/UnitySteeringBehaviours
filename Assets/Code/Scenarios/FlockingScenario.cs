@@ -42,6 +42,11 @@ namespace BGE.Scenarios
                 if (i == whichBoid)
                 {
                     boid.GetComponent<SteeringBehaviours>().drawNeighbours = true;
+                    AudioSource audio = boid.AddComponent<AudioSource>();
+                    AudioClip clip = Resources.Load<AudioClip>("Audio/spaceship");
+                    audio.loop = true;
+                    audio.clip = clip;
+                    audio.Play();
                     camBoid = boid;
                 }
                 else
@@ -49,8 +54,6 @@ namespace BGE.Scenarios
                     boid.GetComponent<SteeringBehaviours>().drawNeighbours = false;
                 }
             }
-
-            
 
             // Create some obstacles..
             int numObstacles = 5;
