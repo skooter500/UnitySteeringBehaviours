@@ -23,7 +23,7 @@ namespace BGE
         // Use this for initialization
         GUIStyle style = new GUIStyle();
 
-        float[] timeModifiers = { 0.2f, 0.5f, 1.0f, 0.0f };
+        float[] timeModifiers = { 0.2f, 0.5f, 1.0f, 2.0f, 0.0f };
         int timeModIndex = 2;
         
         GameObject monoCamera;
@@ -189,7 +189,7 @@ namespace BGE
         {
             if (Input.GetButtonDown("X Button"))
             {
-                Params.drawDebugLines = false;
+                Params.drawDebugLines = !Params.drawDebugLines;
             }
 
             if (Input.GetButtonDown("A Button"))
