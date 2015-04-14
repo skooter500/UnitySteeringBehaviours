@@ -51,7 +51,7 @@ namespace BGE.Scenarios
 
             o = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             o.tag = "obstacle";
-            o.renderer.material.color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+            o.GetComponent<Renderer>().material.color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
             o.transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             o.transform.position = position;
             return o;
@@ -96,7 +96,7 @@ namespace BGE.Scenarios
 
         public void GroundEnabled(bool enabled)
         {
-            GameObject.FindGameObjectWithTag("ground").renderer.enabled = enabled;
+            GameObject.FindGameObjectWithTag("ground").GetComponent<Renderer>().enabled = enabled;
         }
     }
 }

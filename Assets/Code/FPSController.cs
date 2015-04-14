@@ -13,7 +13,7 @@ namespace BGE
         // Use this for initialization
         void Start()
         {
-            Screen.showCursor = false;
+            Cursor.visible = false;
             Screen.lockCursor = true;
         }
 
