@@ -28,7 +28,6 @@ namespace BGE
         
         GameObject monoCamera;
         GameObject activeCamera;
-        GameObject riftCamera;             
         
         void Awake()
         {
@@ -38,7 +37,6 @@ namespace BGE
         void Start()
         {
             instance = this;
-            Screen.showCursor = false;
 
             style.fontSize = 18;
             style.normal.textColor = Color.white;
@@ -58,7 +56,6 @@ namespace BGE
             currentScenario.Start();
 
             monoCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            riftCamera = GameObject.FindGameObjectWithTag("ovrcamera");
 
             activeCamera = monoCamera;
 
@@ -206,16 +203,6 @@ namespace BGE
                 
             }
             Params.timeModifier = timeModifiers[timeModIndex];
-            if (Params.riftEnabled)
-            {
-                riftCamera.SetActive(true);
-                activeCamera = riftCamera;
-            }
-            else
-            {
-                riftCamera.SetActive(false);
-                activeCamera = monoCamera;
-            }
             PrintMessage("Press F1 to toggle camera mode");
             PrintMessage("Press F2 to adjust speed");
             PrintMessage("Press F4 to toggle messages");

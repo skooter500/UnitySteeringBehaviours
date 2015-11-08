@@ -17,7 +17,7 @@ namespace BGE
             obstacles = GameObject.FindGameObjectsWithTag("obstacle");
             foreach (GameObject o in obstacles)
             {
-                float radius = o.renderer.bounds.extents.magnitude;
+                float radius = o.GetComponent<Renderer>().bounds.extents.magnitude;
                 radii.Add(radius);
             }           
         }
@@ -397,7 +397,7 @@ namespace BGE
         {
             foreach (GameObject o in obstacles)
             {
-                float radius = o.renderer.bounds.extents.magnitude;
+                float radius = o.GetComponent<Renderer>().bounds.extents.magnitude;
                 Sphere sphere = new Sphere(radius, o.transform.position);
                 BGE.Geom.Ray ray = new BGE.Geom.Ray();
                 ray.look = point1 - point0;

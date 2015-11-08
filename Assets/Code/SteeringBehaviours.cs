@@ -363,6 +363,7 @@ namespace BGE
 
             timeDelta = Time.deltaTime * Params.timeModifier;
 
+
             if (timeDelta > 0.0f)
             {
                 smoothRate = Utilities.Clip(9.0f * timeDelta, 0.15f, 0.4f) / 2.0f;

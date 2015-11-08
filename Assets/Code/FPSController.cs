@@ -13,8 +13,6 @@ namespace BGE
         // Use this for initialization
         void Start()
         {
-            Screen.showCursor = false;
-            Screen.lockCursor = true;
         }
 
         void Yaw(float angle)
@@ -46,26 +44,13 @@ namespace BGE
 
         void Walk(float units)
         {
-            if (Params.riftEnabled)
-            {
-                transform.position += GameObject.FindGameObjectWithTag("rightcamera").transform.forward * units;
-            }
-            else 
-            {
-                transform.position += transform.forward * units;
-            }
+            transform.position += transform.forward * units;
         }
 
         void Strafe(float units)
         {
-            if (Params.riftEnabled)
-            {
-                transform.position += GameObject.FindGameObjectWithTag("rightcamera").transform.right * units;
-            }
-            else
-            {
-                transform.position += transform.right * units;
-            }
+            transform.position += transform.right * units;
+            
         }
 
         // Update is called once per frame
