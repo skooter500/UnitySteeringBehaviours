@@ -37,7 +37,6 @@ namespace BGE
         void Start()
         {
             instance = this;
-
             style.fontSize = 18;
             style.normal.textColor = Color.white;
 
