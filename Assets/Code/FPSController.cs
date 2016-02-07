@@ -7,9 +7,7 @@ namespace BGE
 {
     public class FPSController : MonoBehaviour
     {
-
-        float speed = 10.0f;
-        
+        float speed = 200.0f;
         // Use this for initialization
         void Start()
         {
@@ -47,10 +45,14 @@ namespace BGE
             transform.position += transform.forward * units;
         }
 
+        void Fly(float units)
+        {
+            transform.position += Vector3.up * units;
+        }
+
         void Strafe(float units)
         {
             transform.position += transform.right * units;
-            
         }
 
         // Update is called once per frame
@@ -59,11 +61,9 @@ namespace BGE
             float mouseX, mouseY;
             float speed = this.speed;
 
-            float runAxis = Input.GetAxis("Run Axis");
-
-            if (Input.GetKey(KeyCode.LeftShift) || runAxis != 0)
+            if (Input.GetKey(KeyCode.LeftShift))
             {
-                speed *= 10.0f;
+                speed *= 5.0f;
             }
 
             if (Input.GetKey(KeyCode.W))
@@ -73,57 +73,36 @@ namespace BGE
 
             if (Input.GetKey(KeyCode.S))
             {
-                Walk(- Time.deltaTime * speed);
+                Walk(-Time.deltaTime * speed);
             }
 
             if (Input.GetKey(KeyCode.A))
             {
-                Strafe(- Time.deltaTime * speed);
+                Strafe(-Time.deltaTime * speed);
             }
 
             if (Input.GetKey(KeyCode.D))
             {
                 Strafe(Time.deltaTime * speed);
             }
-            if (Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.R))
             {
-                Roll(- Time.deltaTime * speed);
+                Fly(Time.deltaTime * speed);
             }
-            if (Input.GetKey(KeyCode.E))
+            if (Input.GetKey(KeyCode.F))
             {
-                Roll(Time.deltaTime * speed);
+                Fly(-Time.deltaTime * speed);
             }
-
-            
+            //BoidManager.PrintVector("OVR Forward: ", ovrCamera.transform.forward);
 
             mouseX = Input.GetAxis("Mouse X");
             mouseY = Input.GetAxis("Mouse Y");
 
-            GameObject ovrplayer = GameObject.FindGameObjectWithTag("ovrcamera");
-            if (ovrplayer != null)
-            {
-                ovrplayer.transform.position = transform.position;
-            }
-            
+
             Yaw(mouseX);
-            float contYaw = Input.GetAxis("Yaw Axis");
-            float contPitch = Input.GetAxis("Pitch Axis");
-            Yaw(contYaw);
 
             // If in Rift mode, dont pitch
-            if (!Params.riftEnabled)
-            {
-                Pitch(-mouseY);
-                Pitch(contPitch);
-            }
-
-            float contWalk = Input.GetAxis("Walk Axis");
-            float contStrafe = Input.GetAxis("Strafe Axis");
-            Walk(-contWalk * speed * Time.deltaTime);
-            Strafe(contStrafe * speed * Time.deltaTime);
-            
-            SteeringManager.PrintVector("Cam pos: ", transform.position);
-            SteeringManager.PrintVector("Cam forward: ", transform.forward);
+            Pitch(-mouseY);
         }
     }
 }

@@ -96,18 +96,7 @@ namespace BGE
                     }
                 }
 
-                if (Event.current.keyCode == KeyCode.R)
-                {
-                    currentScenario.TearDown();
-                    currentScenario = scenarios[6];
-                    currentScenario.Start();
-                    Params.showMessages = false;
-                    Params.riftEnabled = true;
-                    timeModIndex = 0;
-                    Params.cellSpacePartitioning = true;
-                    Params.drawDebugLines = true;
-                    Params.camMode = (int) Params.camModes.boid;
-                }
+                
 
                 if (Event.current.keyCode == KeyCode.F2)
                 {
