@@ -895,10 +895,19 @@ namespace BGE
         #endregion Flocking
 
         // Use this for initialization
-        void Start()
+        void Awake()
         {
             maxSpeed = Params.GetFloat("max_speed");
             wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius");
+
+            force = Vector3.zero;
+            velocity = Vector3.zero;
+            mass = 1.0f;
+            TurnOffAll();
+            calculationMethod = CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation;
+            target = null;
+            leader = null;
+            maxForce = Params.GetFloat("max_force");
         }
 
         private float GetRadius()
@@ -915,17 +924,7 @@ namespace BGE
         }
 
         public SteeringBehaviours()
-        {
-            force = Vector3.zero;
-            velocity = Vector3.zero;
-            mass = 1.0f;
-            TurnOffAll();
-            calculationMethod = CalculationMethods.WeightedTruncatedRunningSumWithPrioritisation;
-            target = null;
-            leader = null;
-            maxSpeed = Params.GetFloat("max_speed");
-            maxForce = Params.GetFloat("max_force");
-            wanderTargetPos = UnityEngine.Random.insideUnitSphere * Params.GetFloat("wander_radius"); 
+        {            
         }
     }
 }
